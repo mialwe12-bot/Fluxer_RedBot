@@ -1,0 +1,20 @@
+{
+  "reactionReason": "Reaktionsrolle",
+  "joinReason": "Auto-/Sticky-Rolle beim Beitritt",
+  "dmMissingRequired": "Du kannst die Rolle **{role}** noch nicht bekommen – dir fehlt eine vorausgesetzte Rolle.",
+  "botTooLow": "Meine höchste Rolle muss über dieser Rolle liegen.",
+  "youTooLow": "Deine höchste Rolle muss über dieser Rolle liegen.",
+  "badRef": "Bitte einen Nachrichten-Link oder eine Nachrichten-ID angeben.",
+  "reactFailed": "Ich konnte nicht reagieren – gibt es die Nachricht und das Emoji, und darf ich dort reagieren?",
+  "reactionAdded": "Reaktion {emoji} vergibt jetzt **{role}**.",
+  "reactionNotFound": "Diese Reaktionsrolle gibt es nicht.",
+  "noReactions": "Keine Reaktionsrollen eingerichtet.",
+  "reactionsTitle": "Reaktionsrollen",
+  "fields": {
+    "auto": "Auto-Rolle",
+    "sticky": "Sticky",
+    "exclusive": "Schließt aus",
+    "required": "Benötigt (eine davon)",
+    "reactions": "Reaktionen"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Server-Verwaltung: Rollen vergeben/bearbeiten, selbst wählbare Rollen, Ankündigungen an alle Server, Serversperre.",
+  "displayName": "Admin",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

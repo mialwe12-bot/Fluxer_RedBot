@@ -15,7 +15,8 @@ import type { Logger } from './logger.js';
 import { PermissionFlags } from './platform/permissionBits.js';
 import type { FluxerPlatform } from './platform/platform.js';
 import type { APIMessage, BotStatus, MessagePayload } from './platform/types.js';
-import { PermissionManager } from './permissions/permissions.js';
+import { LEVEL_ORDER, PermissionManager } from './permissions/permissions.js';
+import type { PermissionLevel } from './commands/types.js';
 import { Scheduler } from './scheduler/scheduler.js';
 import { embedToText } from './utils/embeds.js';
 import { MESSAGE_LIMIT, pagify } from './utils/format.js';
@@ -104,6 +105,8 @@ export class Bot {
       modRoles: [] as string[],
       locale: null as string | null,
       embeds: null as boolean | null,
+      /** Benutzer-/Rollen-IDs, die von Automod/Filtern ausgenommen sind (Red: autoimmune). */
+      immune: [] as string[],
     });
     this.i18n = new I18n(this.env.locale);
     this.i18n.loadDirectory('core', path.join(APP_ROOT, 'locales'));
@@ -231,6 +234,46 @@ export class Bot {
       }
       throw err;
     }
+  }
+
+  /** Schnittstelle eines geladenen Cogs (siehe cog.expose()). */
+  cogApi<T>(name: string): T | undefined {
+    return this.cogs.loaded.get(name)?.api as T | undefined;
+  }
+
+  /** Berechtigungsstufe eines Users auf einem Server. */
+  async levelOf(guildId: string | undefined, userId: string): Promise<PermissionLevel> {
+    return this.permissions.levelOf({ userId, guildId, channelId: '' });
+  }
+
+  /**
+   * Von Automatiken (Filter, Automod, Einladungssperre …) ausgenommen?
+   * Wie bei Red: Mods und höher, der Bot selbst sowie per `autoimmune` eingetragene User/Rollen.
+   */
+  async isImmune(guildId: string, userId: string): Promise<boolean> {
+    if (userId === this.platform.user?.id) return true;
+    const immune = this.core.guild(guildId).get<string[]>('immune');
+    if (immune.includes(userId)) return true;
+    const member = this.platform.getMember(guildId, userId);
+    if (member?.roles?.some((r) => immune.includes(r))) return true;
+    return LEVEL_ORDER[await this.levelOf(guildId, userId)] >= LEVEL_ORDER.mod;
+  }
+
+  /**
+   * Rollen-Hierarchie für Moderationsaktionen prüfen. Liefert einen i18n-Schlüssel (Kern) bei Verstoß,
+   * sonst null. Bot-Owner und Serverbesitzer dürfen alle außer dem Serverbesitzer moderieren.
+   */
+  hierarchyProblem(guildId: string, actorId: string, targetId: string): string | null {
+    const guild = this.platform.getGuild(guildId);
+    if (actorId === targetId) return 'hierarchy.self';
+    if (targetId === this.platform.user?.id) return 'hierarchy.bot';
+    if (guild && targetId === guild.owner_id) return 'hierarchy.owner';
+    const target = this.platform.topRolePosition(guildId, targetId);
+    if (!this.isOwner(actorId) && guild?.owner_id !== actorId) {
+      if (this.platform.topRolePosition(guildId, actorId) <= target) return 'hierarchy.actor';
+    }
+    if (this.platform.user && this.platform.topRolePosition(guildId, this.platform.user.id) <= target) return 'hierarchy.botRole';
+    return null;
   }
 
   recordError(command: string, err: unknown, id: string): void {

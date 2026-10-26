@@ -1,7 +1,7 @@
 import os from 'node:os';
 import { CogError } from '../cogs/loader.js';
 import type { CommandContext } from '../commands/context.js';
-import type { ResolvedUser } from '../commands/parser.js';
+import type { ResolvedMentionable, ResolvedUser } from '../commands/parser.js';
 import { OptionType, type CommandDefinition } from '../commands/types.js';
 import { CommandError, UserError } from '../commands/errors.js';
 import type { APIRole, BotStatus } from '../platform/types.js';
@@ -515,6 +515,21 @@ function ownerCommands(): CommandDefinition[] {
       name: 'tasks',
       description: 'Zeigt alle geplanten Tasks.',
       permissions: { level: 'owner' },
+      subcommands: [
+        {
+          name: 'run',
+          description: 'Führt einen geplanten Task sofort aus.',
+          options: [
+            { name: 'besitzer', description: 'z. B. cog:mod', type: OptionType.String, required: true },
+            { name: 'name', description: 'Taskname', type: OptionType.String, required: true },
+          ],
+          run: async (ctx) => {
+            const ok = await ctx.bot.scheduler.runNow(ctx.arg<string>('besitzer'), ctx.arg<string>('name'));
+            if (!ok) throw new CommandError('core.tasks.notFound');
+            await ctx.tick();
+          },
+        },
+      ],
       run: async (ctx) => {
         const tasks = ctx.bot.scheduler.list();
         if (!tasks.length) return ctx.reply(ctx.t('core.tasks.none'));
@@ -528,8 +543,56 @@ function ownerCommands(): CommandDefinition[] {
   ];
 }
 
+function autoimmuneCommand(): CommandDefinition {
+  const target = { name: 'ziel', description: 'Benutzer oder Rolle', type: OptionType.Mentionable, required: true } as const;
+  return {
+    name: 'autoimmune',
+    description: 'Ausnahmen von Automod, Filtern und Einladungssperre verwalten.',
+    guildOnly: true,
+    permissions: { level: 'admin', member: ['ManageGuild'] },
+    run: async (ctx) => {
+      const list = ctx.bot.core.guild(ctx.guildId!).get<string[]>('immune');
+      const g = ctx.guild;
+      const names = list.map((id) => (g?.roles.has(id) ? `@${g.roles.get(id)!.name}` : `<@${id}>`));
+      await ctx.reply(`${ctx.t('core.immune.list')}\n${names.join(', ') || '–'}\n${ctx.t('core.immune.hint')}`);
+    },
+    subcommands: [
+      {
+        name: 'add',
+        description: 'Fügt eine Ausnahme hinzu.',
+        options: [target],
+        run: async (ctx) => {
+          const m = ctx.arg<ResolvedMentionable>('ziel');
+          ctx.bot.core.guild(ctx.guildId!).update<string[]>('immune', (l) => [...new Set([...(l ?? []), m.id])]);
+          await ctx.reply(ctx.t('core.immune.added'));
+        },
+      },
+      {
+        name: 'remove',
+        description: 'Entfernt eine Ausnahme.',
+        options: [target],
+        run: async (ctx) => {
+          const m = ctx.arg<ResolvedMentionable>('ziel');
+          ctx.bot.core.guild(ctx.guildId!).update<string[]>('immune', (l) => (l ?? []).filter((id) => id !== m.id));
+          await ctx.reply(ctx.t('core.immune.removed'));
+        },
+      },
+      {
+        name: 'check',
+        description: 'Prüft, ob ein Benutzer ausgenommen ist.',
+        options: [{ name: 'user', description: 'Benutzer', type: OptionType.User, required: true }],
+        run: async (ctx) => {
+          const user = ctx.arg<ResolvedUser>('user');
+          const immune = await ctx.bot.isImmune(ctx.guildId!, user.id);
+          await ctx.reply(ctx.t(immune ? 'core.immune.yes' : 'core.immune.no', { user: `<@${user.id}>` }));
+        },
+      },
+    ],
+  };
+}
+
 export const coreCogDefinition: CogDefinition = {
   setup(cog) {
-    for (const def of [...cogCommands(), ...botCommands(), setCommand(), ...ownerCommands()]) cog.command(def);
+    for (const def of [...cogCommands(), ...botCommands(), setCommand(), ...ownerCommands(), autoimmuneCommand()]) cog.command(def);
   },
 };

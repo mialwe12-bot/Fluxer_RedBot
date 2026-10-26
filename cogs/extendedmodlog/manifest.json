@@ -1,0 +1,8 @@
+{
+  "name": "extendedmodlog",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Ausführliches Server-Log: gelöschte/bearbeitete Nachrichten, Beitritte, Bans, Rollen, Nicknames, Kanäle, Sprachkanäle, Einladungen.",
+  "displayName": "Erweitertes ModLog",
+  "endUserData": "Speichert nichts dauerhaft; Nachrichteninhalte werden nur kurz im Speicher gehalten, um Lösch-/Bearbeitungs-Logs zu ermöglichen."
+}

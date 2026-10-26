@@ -1,0 +1,9 @@
+{
+  "badCount": "Die Anzahl muss zwischen 1 und {max} liegen.",
+  "confirmMany": "Wirklich bis zu **{count}** Nachrichten löschen?",
+  "badRef": "Bitte einen Nachrichten-Link oder eine Nachrichten-ID aus **diesem** Kanal angeben.",
+  "done": {
+    "one": "🧹 {count} Nachricht gelöscht.",
+    "other": "🧹 {count} Nachrichten gelöscht."
+  }
+}

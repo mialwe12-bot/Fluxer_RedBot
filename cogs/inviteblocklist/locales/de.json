@@ -1,0 +1,25 @@
+{
+  "auditReason": "Einladungssperre",
+  "caseReason": "Einladungslink `{code}`",
+  "notice": "{user}, Einladungen zu anderen Servern sind hier nicht erlaubt.",
+  "title": "Einladungssperre",
+  "fields": {
+    "status": "Status",
+    "mode": "Modus",
+    "own": "Eigener Server erlaubt",
+    "allowed": "Erlaubt",
+    "blocked": "Gesperrt"
+  },
+  "modes": {
+    "all": "alle sperren (außer erlaubte)",
+    "list": "nur Sperrliste"
+  },
+  "modeSet": "Modus: {mode}.",
+  "listChanged": {
+    "one": "{count} Eintrag geändert.",
+    "other": "{count} Einträge geändert."
+  },
+  "noCode": "Kein Einladungscode erkannt.",
+  "wouldBlock": "⛔ Einladung `{code}` würde gelöscht.",
+  "wouldAllow": "✅ Einladung `{code}` ist erlaubt."
+}

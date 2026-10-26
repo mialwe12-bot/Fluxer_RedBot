@@ -164,6 +164,18 @@ export class Cog {
     }
   }
 
+  /** Öffentliche Schnittstelle dieses Cogs für andere Cogs (siehe expose()). */
+  api: unknown = undefined;
+
+  /**
+   * Stellt anderen Cogs eine Schnittstelle bereit. Abhängige Cogs holen sie mit
+   * `cog.bot.cogApi<ModlogApi>('modlog')` (undefined, wenn der Cog nicht geladen ist).
+   */
+  expose<T>(api: T): T {
+    this.api = api;
+    return api;
+  }
+
   /** @internal */
   abort(): void {
     this.controller.abort();

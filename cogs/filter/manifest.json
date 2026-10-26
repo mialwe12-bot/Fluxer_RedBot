@@ -1,0 +1,8 @@
+{
+  "name": "filter",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Wortfilter für Server und Kanäle (inkl. Platzhalter *), Namensfilter und automatischer Bann bei wiederholten Treffern.",
+  "displayName": "Filter",
+  "endUserData": "Speichert keine Nutzerdaten (Treffer werden nur kurzzeitig im Speicher gezählt)."
+}

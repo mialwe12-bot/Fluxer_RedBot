@@ -16,6 +16,7 @@ export type { TaskSpec } from '../scheduler/scheduler.js';
 export type { Translator, Vars } from '../i18n/i18n.js';
 export type { ResolvedUser, ResolvedMentionable } from '../commands/parser.js';
 export type { ReactionEvent, Page } from '../utils/menus.js';
+export type { CachedMessage } from '../platform/platform.js';
 export type * from '../platform/types.js';
 
 export {
@@ -41,6 +42,11 @@ export {
   parseDuration,
   formatDateTime,
   formatNumber,
+  parseMessageRef,
+  escapeRegex,
+  takeDuration,
+  takeInteger,
+  relativeTime,
 } from '../utils/format.js';
 export { PermissionFlags, PermissionLabels, hasPermissions, type PermissionName } from '../platform/permissionBits.js';
 export { NUMBER_EMOJIS, EMOJI, sameEmoji } from '../utils/menus.js';

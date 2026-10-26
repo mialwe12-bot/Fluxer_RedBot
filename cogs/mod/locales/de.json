@@ -1,0 +1,47 @@
+{
+  "dm": "Du hast auf **{server}** folgende Maßnahme erhalten: **{action}**.\nGrund: {reason}",
+  "dmUntil": "Gültig bis: {until}",
+  "actions": {
+    "kick": "Kick",
+    "ban": "Bann",
+    "hackban": "Bann",
+    "tempban": "Temporärer Bann",
+    "softban": "Softban (Kick mit Löschen der Nachrichten)",
+    "timeout": "Timeout"
+  },
+  "notMember": "Dieser Benutzer ist nicht auf dem Server.",
+  "notBanned": "Dieser Benutzer ist nicht gebannt.",
+  "notInVoice": "Dieses Mitglied ist in keinem Sprachkanal.",
+  "badDays": "Die Anzahl Tage muss zwischen 0 und 7 liegen.",
+  "badDuration": "Ungültige Dauer – Beispiele: 30m, 12h, 3d, 1w.",
+  "badTimeout": "Ungültige Dauer – erlaubt sind 10 Sekunden bis 28 Tage (z. B. 10m, 2h, 1d).",
+  "badSlowmode": "Ungültiges Intervall – erlaubt sind 0 bis 6 Stunden (z. B. 5s, 1m).",
+  "kicked": "👢 **{user}** wurde gekickt.",
+  "banned": "🔨 **{user}** wurde gebannt.",
+  "tempbanned": "⏳ **{user}** wurde für {duration} gebannt.",
+  "softbanned": "🔄 **{user}** wurde gesoftbannt.",
+  "unbanned": "🕊️ **{user}** wurde entbannt.",
+  "timedOut": "⏱️ **{user}** ist für {duration} im Timeout.",
+  "untimedOut": "⏱️ Timeout von **{user}** aufgehoben.",
+  "renamed": "✏️ **{user}** heißt jetzt **{nick}**.",
+  "nickReset": "✏️ Nickname von **{user}** zurückgesetzt.",
+  "slowmodeOn": "🐢 Slowmode: {time}.",
+  "slowmodeOff": "🐢 Slowmode deaktiviert.",
+  "voicekicked": "🔈 **{user}** wurde aus dem Sprachkanal geworfen.",
+  "tempbanExpired": "Temporärer Bann abgelaufen",
+  "nick": "Nickname",
+  "joined": "Beigetreten",
+  "roles": {
+    "one": "Rolle ({count})",
+    "other": "Rollen ({count})"
+  },
+  "voice": "Im Sprachkanal",
+  "timeoutUntil": "Timeout bis",
+  "cases": "Moderationsfälle",
+  "settingsTitle": "Mod-Einstellungen",
+  "settings": {
+    "dm": "DM bei Maßnahmen",
+    "deleteDays": "Nachrichten-Tage beim Bann",
+    "hierarchy": "Rollen-Hierarchie beachten"
+  }
+}

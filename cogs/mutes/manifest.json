@@ -1,0 +1,9 @@
+{
+  "name": "mutes",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Stummschalten auf dem ganzen Server (Mute-Rolle oder Timeout) oder in einzelnen Kanälen, mit Ablaufzeit.",
+  "displayName": "Mutes",
+  "dependencies": ["modlog"],
+  "endUserData": "Speichert laufende Stummschaltungen (Benutzer-ID, Ende, Grund)."
+}

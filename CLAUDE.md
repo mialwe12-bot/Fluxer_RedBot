@@ -26,12 +26,18 @@ Modularer Fluxer-Bot nach Red-DiscordBot-Vorbild. Alle Bot-Texte, das README und
 
 ## Phasen
 1. Kern + example/permissions/downloader ✅
-2. admin, alias, mod, modlog, extendedmodlog, mutes, warnings, automod, filter, retrigger, inviteblocklist, cleanup, reports, roletools
+2. admin, alias, mod, modlog, extendedmodlog, mutes, warnings, automod, filter, retrigger, inviteblocklist, cleanup, reports, roletools ✅
 3. general, customcom, welcome, suggestions, tickets, levelup, badges, economy, trivia, bingo, conversions, eventposter, streams, image, instadl
 4. afkchannel, untis, animewatch, dailystats, birthday, gameblacklist, jellyfinmusic
 5. audio, Downloader-Erweiterungen
 
 Nach jeder Phase fragt Claude, ob es weitergeht.
+
+## Konventionen (Phase 2)
+- Cog-übergreifende APIs: `cog.expose(api)` / `bot.cogApi<T>('name')`; Typen per `import type` aus `../<cog>/index.js`
+- Moderations-Cogs legen Fälle über `modlog` an; Immunität über `bot.isImmune()`, Hierarchie über `bot.hierarchyProblem()`
+- Optionale Zahl/Dauer vor freiem Text: Option `rest` + `takeInteger`/`takeDuration` aus dem SDK
+- Tests der Cogs: `tests/phase2.test.ts` (FakeRest, `platform.handleDispatch`)
 
 ## Befehle
 - `npm test`, `npm run typecheck`, `npm run build`

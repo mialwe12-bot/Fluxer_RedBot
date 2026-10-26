@@ -1,0 +1,33 @@
+{
+  "types": {
+    "text": "Textantwort",
+    "dm": "DM",
+    "react": "Reaktion",
+    "delete": "Löschen",
+    "command": "Befehl",
+    "kick": "Kick",
+    "ban": "Bann"
+  },
+  "fields": {
+    "type": "Typ",
+    "status": "Status",
+    "count": "Ausgelöst",
+    "response": "Antwort/Aktion",
+    "cooldown": "Cooldown",
+    "ignored": "Ignorierte Kanäle",
+    "author": "Erstellt von"
+  },
+  "modReason": "ReTrigger \"{name}\"",
+  "notFound": "Trigger `{name}` gibt es nicht.",
+  "badRegex": "Ungültiger oder zu riskanter regulärer Ausdruck: {reason}",
+  "exists": "Ein Trigger `{name}` existiert bereits.",
+  "tooMany": "Maximal 100 Trigger pro Server.",
+  "created": "Trigger **{name}** ({type}) angelegt.",
+  "none": "Keine Trigger angelegt.",
+  "listTitle": "ReTrigger",
+  "removed": "Trigger **{name}** gelöscht.",
+  "toggledOn": "Trigger **{name}** ist aktiv.",
+  "toggledOff": "Trigger **{name}** ist deaktiviert.",
+  "ignoreOn": "Wird in {channel} ignoriert.",
+  "ignoreOff": "Wird in {channel} wieder ausgelöst."
+}

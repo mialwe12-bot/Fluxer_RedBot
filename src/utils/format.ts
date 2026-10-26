@@ -88,9 +88,9 @@ const DURATION_UNITS: Record<string, number> = {
 };
 
 /** "1h30m", "2 tage", "45s", "10" (=Minuten, wenn defaultUnit='m') → Sekunden. undefined bei ungültig. */
-export function parseDuration(input: string, defaultUnit: 's' | 'm' = 'm'): number | undefined {
+export function parseDuration(input: string, defaultUnit: 's' | 'm' | 'h' | 'd' = 'm'): number | undefined {
   const text = input.trim().toLowerCase().replace(/,/g, '.');
-  if (/^\d+(\.\d+)?$/.test(text)) return Math.round(Number(text) * (defaultUnit === 'm' ? 60 : 1));
+  if (/^\d+(\.\d+)?$/.test(text)) return Math.round(Number(text) * { s: 1, m: 60, h: 3600, d: 86400 }[defaultUnit]);
   const re = /(\d+(?:\.\d+)?)\s*([a-zäöü]+)/g;
   let total = 0;
   let matched = '';
@@ -111,4 +111,51 @@ export function formatDateTime(date: Date | number, timeZone = process.env.TZ ??
 
 export function formatNumber(n: number): string {
   return new Intl.NumberFormat('de-DE').format(n);
+}
+
+/**
+ * Nachrichtenverweis aus Link oder IDs: ".../channels/<guild>/<kanal>/<nachricht>", "<kanal>-<nachricht>"
+ * oder nur "<nachricht>" (dann im aktuellen Kanal).
+ */
+export function parseMessageRef(text: string, currentChannelId?: string): { channelId: string; messageId: string } | undefined {
+  const t = text.trim();
+  const link = /\/channels\/(?:\d+|@me)\/(\d+)\/(\d+)/.exec(t);
+  if (link) return { channelId: link[1]!, messageId: link[2]! };
+  const pair = /^(\d{15,21})[-/:](\d{15,21})$/.exec(t);
+  if (pair) return { channelId: pair[1]!, messageId: pair[2]! };
+  if (/^\d{15,21}$/.test(t) && currentChannelId) return { channelId: currentChannelId, messageId: t };
+  return undefined;
+}
+
+/** Sonderzeichen für RegExp escapen. */
+export function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Liest eine Dauer am Anfang eines Textes ("10m Grund …" → 600 s + "Grund …"). */
+export function takeDuration(text: string, defaultUnit: 's' | 'm' | 'h' | 'd' = 'm'): { seconds: number | undefined; rest: string } {
+  const m = /^\s*(\S+)\s*([\s\S]*)$/.exec(text);
+  if (!m) return { seconds: undefined, rest: '' };
+  const seconds = /^\d+(?:[.,]\d+)?[a-zäöü]*(?:\d+[a-zäöü]+)*$/i.test(m[1]!) ? parseDuration(m[1]!, defaultUnit) : undefined;
+  return seconds === undefined ? { seconds: undefined, rest: text.trim() } : { seconds, rest: m[2]!.trim() };
+}
+
+/** Liest eine ganze Zahl am Anfang eines Textes ("3 Grund" → 3 + "Grund"). */
+export function takeInteger(text: string): { value: number | undefined; rest: string } {
+  const m = /^\s*(-?\d+)(?:\s+([\s\S]*))?$/.exec(text);
+  return m ? { value: Number(m[1]), rest: (m[2] ?? '').trim() } : { value: undefined, rest: text.trim() };
+}
+
+/** Relative Zeitangabe auf Deutsch ("in 5 Minuten", "vor 2 Stunden"). */
+export function relativeTime(date: Date | number, now = Date.now()): string {
+  const diff = Math.round((new Date(date).getTime() - now) / 1000);
+  return new Intl.RelativeTimeFormat('de', { numeric: 'auto' }).format(
+    ...((): [number, Intl.RelativeTimeFormatUnit] => {
+      const a = Math.abs(diff);
+      if (a < 60) return [diff, 'second'];
+      if (a < 3600) return [Math.round(diff / 60), 'minute'];
+      if (a < 86400) return [Math.round(diff / 3600), 'hour'];
+      return [Math.round(diff / 86400), 'day'];
+    })(),
+  );
 }

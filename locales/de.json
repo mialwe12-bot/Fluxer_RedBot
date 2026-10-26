@@ -6,7 +6,19 @@
     "no": "Nein",
     "none": "keine",
     "enabled": "aktiviert",
-    "disabled": "deaktiviert"
+    "disabled": "deaktiviert",
+    "reason": "Grund",
+    "noReason": "Kein Grund angegeben",
+    "moderator": "Moderator",
+    "user": "Benutzer",
+    "duration": "Dauer",
+    "until": "Bis",
+    "forever": "dauerhaft",
+    "channel": "Kanal",
+    "on": "an",
+    "off": "aus",
+    "notSet": "nicht gesetzt",
+    "done": "Erledigt."
   },
   "perm": {
     "levels": {
@@ -191,7 +203,23 @@
     },
     "tasks": {
       "title": "Geplante Tasks",
-      "none": "Keine geplanten Tasks."
+      "none": "Keine geplanten Tasks.",
+      "notFound": "Diesen Task gibt es nicht (siehe `tasks`)."
+    },
+    "immune": {
+      "list": "**Ausnahmen (autoimmune):**",
+      "hint": "Mods, Admins und der Serverbesitzer sind immer ausgenommen.",
+      "added": "Ausnahme hinzugefügt.",
+      "removed": "Ausnahme entfernt.",
+      "yes": "{user} ist von Automatiken ausgenommen.",
+      "no": "{user} ist **nicht** ausgenommen."
     }
+  },
+  "hierarchy": {
+    "self": "Das kannst du nicht mit dir selbst machen.",
+    "bot": "Das kann ich nicht mit mir selbst machen.",
+    "owner": "Der Serverbesitzer kann nicht moderiert werden.",
+    "actor": "Du kannst nur Mitglieder moderieren, deren höchste Rolle unter deiner liegt.",
+    "botRole": "Meine höchste Rolle liegt nicht über der Rolle dieses Mitglieds – bitte meine Rolle höher schieben."
   }
 }

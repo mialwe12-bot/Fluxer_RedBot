@@ -1,0 +1,34 @@
+{
+  "reason": "Automod: {rule}",
+  "rules": {
+    "spam": "Nachrichten-Spam",
+    "mentions": "Massen-Erwähnungen",
+    "duplicates": "Wiederholte Nachrichten",
+    "caps": "Großbuchstaben",
+    "links": "Links",
+    "emojis": "Emoji-Spam",
+    "newlines": "Zeilenflut"
+  },
+  "actions": {
+    "delete": "Löschen",
+    "warn": "Verwarnung",
+    "timeout": "Timeout",
+    "kick": "Kick",
+    "ban": "Bann"
+  },
+  "logTitle": "🤖 Automod: {rule}",
+  "logAction": "Aktion",
+  "logSample": "Nachricht",
+  "statusTitle": "Automod ({state})",
+  "statusFooter": "Mods, Admins und autoimmune-Einträge sind ausgenommen.",
+  "logChannel": "Log-Kanal",
+  "ignored": "Ausgenommen",
+  "enabled": "🤖 Automod ist jetzt **aktiv**.",
+  "disabled": "🤖 Automod ist jetzt **aus**.",
+  "badDuration": "Ungültige Dauer – Beispiele: 10m, 1h.",
+  "badParam": "Diesen Parameter gibt es für die Regel nicht. Möglich: {params}",
+  "allowed": "Erlaubte Domains: {domains}",
+  "ignoredAdded": "Ab jetzt ausgenommen.",
+  "ignoredRemoved": "Nicht mehr ausgenommen.",
+  "badIgnore": "Bitte einen Kanal (#kanal) oder eine Rolle (@rolle) angeben."
+}

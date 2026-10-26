@@ -1,0 +1,8 @@
+{
+  "name": "inviteblocklist",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Löscht Einladungslinks zu fremden Servern – alle (mit Erlaubnisliste) oder nur gesperrte.",
+  "displayName": "Einladungssperre",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

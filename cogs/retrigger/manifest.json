@@ -1,0 +1,8 @@
+{
+  "name": "retrigger",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Reagiert per regulärem Ausdruck auf Nachrichten: Antwort, DM, Reaktion, Löschen, Befehl ausführen, Kick oder Bann.",
+  "displayName": "ReTrigger",
+  "endUserData": "Speichert, wer einen Trigger angelegt hat (Benutzer-ID)."
+}

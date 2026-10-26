@@ -1,0 +1,13 @@
+{
+  "badName": "Alias-Namen dürfen nur Buchstaben, Zahlen, - und _ enthalten (max. 32 Zeichen, keine Leerzeichen).",
+  "isCommand": "`{name}` ist bereits ein Befehl.",
+  "unknownCommand": "`{command}` ist kein bekannter Befehl.",
+  "exists": "Den Alias `{name}` gibt es schon.",
+  "notFound": "Den Alias `{name}` gibt es nicht.",
+  "added": "Alias `{name}` → `{command}` angelegt.",
+  "deleted": "Alias `{name}` gelöscht.",
+  "none": "Keine Aliase vorhanden.",
+  "listTitle": "Aliase auf diesem Server",
+  "globalListTitle": "Globale Aliase",
+  "show": "`{name}` → `{command}` ({uses}× benutzt, angelegt von {creator})"
+}

@@ -125,6 +125,14 @@ export class Scheduler {
     return n;
   }
 
+  /** Führt einen Task sofort aus (z. B. `tasks run` oder Tests). Liefert false, wenn es ihn nicht gibt. */
+  async runNow(owner: string, name: string): Promise<boolean> {
+    const handle = [...this.tasks].find((h) => h.owner === owner && h.spec.name === name);
+    if (!handle) return false;
+    await this.execute(handle);
+    return true;
+  }
+
   list(owner?: string): TaskInfo[] {
     return [...this.tasks]
       .filter((h) => !owner || h.owner === owner)

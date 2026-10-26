@@ -22,6 +22,18 @@ import type {
 } from './types.js';
 import { VoiceUnsupportedError } from './voice.js';
 
+/** Eintrag im Nachrichten-Cache. */
+export interface CachedMessage {
+  id: string;
+  channel_id: string;
+  guild_id: string | null;
+  author: { id: string; username: string; bot: boolean };
+  content: string;
+  attachments: string[];
+  created_at: number;
+  edited_at: number | null;
+}
+
 /** Gateway-Opcodes, die der Bot selbst sendet. */
 const OP_PRESENCE_UPDATE = 3;
 const OP_VOICE_STATE_UPDATE = 4;
@@ -41,13 +53,21 @@ type AnyRecord = Record<string, any>;
  *
  * Events: alle Gateway-Dispatches unter ihrem Namen (z. B. 'MESSAGE_CREATE', 'VOICE_STATE_UPDATE')
  * sowie 'connected', 'disconnected', 'gatewayError'.
- * VOICE_STATE_UPDATE erhält als zweites Argument den vorherigen Voice-State (oder undefined).
+ * Als zweites Argument kommt – soweit bekannt – der vorherige Zustand: VOICE_STATE_UPDATE (Voice-State),
+ * GUILD_MEMBER_UPDATE/REMOVE (Mitglied), GUILD_ROLE_UPDATE/DELETE (Rolle), CHANNEL_UPDATE/DELETE (Kanal),
+ * MESSAGE_UPDATE/DELETE (gecachte Nachricht), MESSAGE_DELETE_BULK (Liste gecachter Nachrichten).
  */
 export class FluxerPlatform extends EventEmitter {
   readonly rest: RestLike;
   readonly gateway: GatewayLike | undefined;
   readonly guilds = new Map<string, CachedGuild>();
   readonly users = new Map<string, APIUser>();
+  /**
+   * Kleiner Nachrichten-Cache (nur für Bearbeitungs-/Lösch-Logs, z. B. extendedmodlog).
+   * Fluxer schickt bei MESSAGE_DELETE nur IDs – ohne Cache wäre der Inhalt unbekannt.
+   */
+  readonly messages = new Map<string, CachedMessage>();
+  messageCacheSize = 5000;
   /** DM-Kanal-ID je User-ID. */
   private readonly dmChannels = new Map<string, string>();
   /** Kanal-ID → Guild-ID (für schnelle Zuordnung). */
@@ -167,8 +187,9 @@ export class FluxerPlatform extends EventEmitter {
       case 'GUILD_ROLE_CREATE':
       case 'GUILD_ROLE_UPDATE': {
         const g = this.guilds.get(d.guild_id);
+        const previous = g && d.role ? g.roles.get(d.role.id) : undefined;
         if (g && d.role) g.roles.set(d.role.id, d.role);
-        return undefined;
+        return previous;
       }
       case 'GUILD_ROLE_UPDATE_BULK': {
         const g = this.guilds.get(d.guild_id);
@@ -176,21 +197,26 @@ export class FluxerPlatform extends EventEmitter {
         return undefined;
       }
       case 'GUILD_ROLE_DELETE': {
-        this.guilds.get(d.guild_id)?.roles.delete(d.role_id);
-        return undefined;
+        const g = this.guilds.get(d.guild_id);
+        const previous = g?.roles.get(d.role_id);
+        g?.roles.delete(d.role_id);
+        return previous;
       }
       case 'CHANNEL_CREATE':
-      case 'CHANNEL_UPDATE':
+      case 'CHANNEL_UPDATE': {
+        const previous = this.getChannel(d.id);
         this.upsertChannel(d as APIChannel);
-        return undefined;
+        return previous;
+      }
       case 'CHANNEL_UPDATE_BULK':
         for (const c of (d.channels ?? []) as APIChannel[]) this.upsertChannel(c);
         return undefined;
       case 'CHANNEL_DELETE': {
         const gid = d.guild_id ?? this.channelGuild.get(d.id);
+        const previous = this.getChannel(d.id);
         if (gid) this.guilds.get(gid)?.channels.delete(d.id);
         this.channelGuild.delete(d.id);
-        return undefined;
+        return previous;
       }
       case 'GUILD_MEMBER_ADD':
       case 'GUILD_MEMBER_UPDATE': {
@@ -225,7 +251,29 @@ export class FluxerPlatform extends EventEmitter {
           const g = this.guilds.get(d.guild_id);
           if (g) this.cacheMember(g, { ...d.member, user: d.author });
         }
+        this.cacheMessage(d as APIMessage);
         return undefined;
+      }
+      case 'MESSAGE_UPDATE': {
+        const previous = this.messages.get(d.id);
+        if (previous && typeof d.content === 'string') {
+          this.messages.set(d.id, { ...previous, content: d.content, edited_at: Date.now() });
+        }
+        return previous;
+      }
+      case 'MESSAGE_DELETE': {
+        const previous = this.messages.get(d.id);
+        this.messages.delete(d.id);
+        return previous;
+      }
+      case 'MESSAGE_DELETE_BULK': {
+        const previous: CachedMessage[] = [];
+        for (const id of (d.ids ?? []) as string[]) {
+          const m = this.messages.get(id);
+          if (m) previous.push(m);
+          this.messages.delete(id);
+        }
+        return previous;
       }
       case 'VOICE_STATE_UPDATE': {
         const gid: string | undefined = d.guild_id ?? undefined;
@@ -251,6 +299,24 @@ export class FluxerPlatform extends EventEmitter {
       }
       default:
         return undefined;
+    }
+  }
+
+  private cacheMessage(m: APIMessage): void {
+    if (!m?.id || !m.author) return;
+    this.messages.set(m.id, {
+      id: m.id,
+      channel_id: m.channel_id,
+      guild_id: m.guild_id ?? null,
+      author: { id: m.author.id, username: m.author.username, bot: Boolean((m.author as { bot?: boolean }).bot) },
+      content: m.content ?? '',
+      attachments: (m.attachments ?? []).map((a) => a.url ?? a.filename),
+      created_at: Date.now(),
+      edited_at: null,
+    });
+    if (this.messages.size > this.messageCacheSize) {
+      const oldest = this.messages.keys().next().value;
+      if (oldest !== undefined) this.messages.delete(oldest);
     }
   }
 
@@ -530,6 +596,64 @@ export class FluxerPlatform extends EventEmitter {
 
   async unbanMember(guildId: string, userId: string, reason?: string): Promise<void> {
     await this.rest.delete(`/guilds/${guildId}/bans/${userId}`, this.withReason(reason));
+  }
+
+  async fetchBans(guildId: string): Promise<Array<{ user: APIUser; reason?: string | null }>> {
+    return (await this.rest.get<Array<{ user: APIUser; reason?: string | null }>>(`/guilds/${guildId}/bans`)) ?? [];
+  }
+
+  // ---------------------------------------------------------------- REST: Rollen/Kanäle/Einladungen
+
+  async createRole(guildId: string, body: { name: string; permissions?: string; color?: number; hoist?: boolean; mentionable?: boolean }, reason?: string): Promise<APIRole> {
+    const role = await this.rest.post<APIRole>(`/guilds/${guildId}/roles`, this.withReason(reason, { body }));
+    this.guilds.get(guildId)?.roles.set(role.id, role);
+    return role;
+  }
+
+  async editRole(guildId: string, roleId: string, body: Partial<{ name: string; permissions: string; color: number; hoist: boolean; mentionable: boolean }>, reason?: string): Promise<APIRole> {
+    const role = await this.rest.patch<APIRole>(`/guilds/${guildId}/roles/${roleId}`, this.withReason(reason, { body }));
+    if (role?.id) this.guilds.get(guildId)?.roles.set(role.id, role);
+    return role;
+  }
+
+  async deleteRole(guildId: string, roleId: string, reason?: string): Promise<void> {
+    await this.rest.delete(`/guilds/${guildId}/roles/${roleId}`, this.withReason(reason));
+    this.guilds.get(guildId)?.roles.delete(roleId);
+  }
+
+  async editChannel(channelId: string, body: AnyRecord, reason?: string): Promise<APIChannel> {
+    const channel = await this.rest.patch<APIChannel>(`/channels/${channelId}`, this.withReason(reason, { body }));
+    if (channel?.id) this.upsertChannel(channel);
+    return channel;
+  }
+
+  /** Kanal-Overwrite setzen (type 0 = Rolle, 1 = Mitglied). */
+  async setChannelOverwrite(channelId: string, targetId: string, overwrite: { type: 0 | 1; allow: bigint; deny: bigint }, reason?: string): Promise<void> {
+    const body = { type: overwrite.type, allow: overwrite.allow.toString(), deny: overwrite.deny.toString() };
+    await this.rest.put(`/channels/${channelId}/permissions/${targetId}`, this.withReason(reason, { body }));
+    const channel = this.getChannel(channelId);
+    if (channel) {
+      const list = (channel.permission_overwrites ?? []).filter((o) => o.id !== targetId);
+      list.push({ id: targetId, ...body } as never);
+      channel.permission_overwrites = list;
+    }
+  }
+
+  async deleteChannelOverwrite(channelId: string, targetId: string, reason?: string): Promise<void> {
+    await this.rest.delete(`/channels/${channelId}/permissions/${targetId}`, this.withReason(reason));
+    const channel = this.getChannel(channelId);
+    if (channel) channel.permission_overwrites = (channel.permission_overwrites ?? []).filter((o) => o.id !== targetId);
+  }
+
+  /** Einladung auflösen (für inviteblocklist). */
+  async fetchInvite(code: string): Promise<{ code: string; guild?: { id: string; name: string } | null } | undefined> {
+    return this.rest.get(`/invites/${encodeURIComponent(code)}`).catch(() => undefined) as Promise<
+      { code: string; guild?: { id: string; name: string } | null } | undefined
+    >;
+  }
+
+  async leaveGuild(guildId: string): Promise<void> {
+    await this.rest.delete(`/users/@me/guilds/${guildId}`);
   }
 
   // ---------------------------------------------------------------- Bot-Profil/Presence

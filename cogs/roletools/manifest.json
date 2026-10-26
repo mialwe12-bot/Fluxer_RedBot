@@ -1,0 +1,8 @@
+{
+  "name": "roletools",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Reaktionsrollen (statt Buttons), Auto-Rollen beim Beitritt, Sticky-Rollen, exklusive und vorausgesetzte Rollen.",
+  "displayName": "RoleTools",
+  "endUserData": "Speichert Sticky-Rollen von Mitgliedern, die den Server verlassen haben."
+}

@@ -1,0 +1,8 @@
+{
+  "name": "cleanup",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Nachrichten aufräumen: nach Anzahl, Benutzer, Text, Bot-Nachrichten, Doppelungen oder Zeitraum.",
+  "displayName": "Cleanup",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

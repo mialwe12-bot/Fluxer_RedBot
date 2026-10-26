@@ -1,0 +1,8 @@
+{
+  "name": "alias",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Eigene Kurzbefehle (Aliase) für bestehende Befehle – pro Server oder global.",
+  "displayName": "Alias",
+  "endUserData": "Speichert, wer einen Alias angelegt hat (Benutzer-ID)."
+}

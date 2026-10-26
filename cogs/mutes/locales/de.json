@@ -1,0 +1,23 @@
+{
+  "viaRole": "Mute-Rolle",
+  "viaTimeout": "Timeout",
+  "muted": "🔇 **{user}** ist für {duration} stummgeschaltet ({how}).",
+  "mutedForever": "🔇 **{user}** ist stummgeschaltet ({how}), bis die Stummschaltung aufgehoben wird.",
+  "unmuted": "🔊 **{user}** ist nicht mehr stummgeschaltet.",
+  "notMuted": "**{user}** ist nicht stummgeschaltet.",
+  "channelMuted": "🔇 **{user}** ist in {channel} für {duration} stummgeschaltet.",
+  "channelMutedForever": "🔇 **{user}** ist in {channel} stummgeschaltet.",
+  "channelUnmuted": "🔊 **{user}** darf in diesem Kanal wieder schreiben.",
+  "activeTitle": "Aktive Stummschaltungen",
+  "none": "Niemand ist stummgeschaltet.",
+  "roleSet": "Mute-Rolle: **{role}**.",
+  "roleCleared": "Keine Mute-Rolle – Stummschaltungen nutzen jetzt den Timeout.",
+  "roleMade": "Rolle **{role}** erstellt und in {ok} Kanälen gesperrt ({failed} fehlgeschlagen). Sie ist jetzt die Mute-Rolle.",
+  "badDuration": "Ungültige Dauer – Beispiele: 10m, 2h, 1d.",
+  "defaultSet": "Standarddauer: {duration}.",
+  "defaultCleared": "Keine Standarddauer – ohne Angabe gilt die Stummschaltung dauerhaft (Rolle) bzw. 28 Tage (Timeout).",
+  "dmMuted": "Du wurdest auf **{server}** stummgeschaltet.\nGrund: {reason}\nBis: {until}",
+  "dmUnmuted": "Deine Stummschaltung auf **{server}** wurde aufgehoben.",
+  "stickyReason": "Stummschaltung besteht weiterhin",
+  "expired": "Stummschaltung abgelaufen"
+}

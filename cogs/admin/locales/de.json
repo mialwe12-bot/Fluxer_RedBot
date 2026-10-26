@@ -1,0 +1,21 @@
+{
+  "everyone": "Die @everyone-Rolle kann so nicht bearbeitet werden.",
+  "botTooLow": "Meine höchste Rolle liegt nicht über **{role}**.",
+  "youTooLow": "Deine höchste Rolle liegt nicht über **{role}**.",
+  "roleAdded": "**{role}** an {user} vergeben.",
+  "roleRemoved": "**{role}** von {user} entfernt.",
+  "badColor": "Unbekannte Farbe – nutze z. B. #ff8800 oder rot, blau, grün …",
+  "colorSet": "Farbe von **{role}** ist jetzt {color}.",
+  "renamed": "**{old}** heißt jetzt **{name}**.",
+  "notSelfrole": "**{role}** ist keine selbst wählbare Rolle.",
+  "selfroleAdded": "Du hast jetzt **{role}**.",
+  "selfroleRemoved": "**{role}** wurde dir entfernt.",
+  "selfroleList": "**Selbst wählbare Rollen:**",
+  "noSelfroles": "Es gibt keine selbst wählbaren Rollen.",
+  "announceConfirm": "Ankündigung an bis zu {count} Server senden?",
+  "announced": "📢 An {sent} Server gesendet, {skipped} übersprungen (kein Kanal gesetzt oder ignoriert).",
+  "ignoreOn": "Dieser Server ignoriert jetzt Ankündigungen.",
+  "ignoreOff": "Dieser Server empfängt wieder Ankündigungen.",
+  "lockOn": "🔒 Serversperre aktiv – neue Server verlasse ich sofort.",
+  "lockOff": "🔓 Serversperre aufgehoben."
+}

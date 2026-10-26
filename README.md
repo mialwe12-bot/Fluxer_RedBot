@@ -10,7 +10,7 @@ Ein modularer Bot für die Chat-Plattform **Fluxer**, gebaut nach dem Vorbild vo
 - Befehle intern im Slash-Command-Format, damit sich native Slash-Commands später ergänzen lassen
 - Docker (multi-stage, non-root), Healthcheck, Watchdog, Auto-Reconnect, Zeitzone Europe/Berlin
 
-> **Stand:** Phase 1 (Kern) ist fertig. Die übrigen Cogs folgen in Phase 2–5, siehe [Cog-Status](#cog-status).
+> **Stand:** Phase 1 (Kern) und Phase 2 (Server-Verwaltung und Moderation) sind fertig. Die übrigen Cogs folgen in Phase 3–5, siehe [Cog-Status](#cog-status).
 
 ---
 
@@ -23,10 +23,11 @@ Ein modularer Bot für die Chat-Plattform **Fluxer**, gebaut nach dem Vorbild vo
 5. [Berechtigungen](#berechtigungen)
 6. [Downloader: Cogs aus Git-Repos](#downloader-cogs-aus-git-repos)
 7. [Cogs entwickeln](#cogs-entwickeln)
-8. [Cog-Status](#cog-status)
-9. [Fluxer: Einschränkungen und Annahmen](#fluxer-einschränkungen-und-annahmen)
-10. [Entwicklung und Tests](#entwicklung-und-tests)
-11. [Betrieb](#betrieb)
+8. [Cogs im Detail](#cogs-im-detail)
+9. [Cog-Status](#cog-status)
+10. [Fluxer: Einschränkungen und Annahmen](#fluxer-einschränkungen-und-annahmen)
+11. [Entwicklung und Tests](#entwicklung-und-tests)
+12. [Betrieb](#betrieb)
 
 ---
 
@@ -75,8 +76,10 @@ fluxer-redbot/
 ├── cogs/                       # mitgelieferte Cogs
 │   ├── example/                # Beispiel: hello, echo, Gruppen, Config, Menüs, Task
 │   ├── permissions/            # Regeln verwalten
-│   └── downloader/             # Git-Repos als Cog-Quellen
-└── tests/                      # Vitest: Loader, Config-API, Rechte, Parser, Dispatcher
+│   ├── downloader/             # Git-Repos als Cog-Quellen
+│   └── modlog/ mod/ mutes/ warnings/ cleanup/ filter/ automod/ retrigger/
+│       inviteblocklist/ reports/ roletools/ alias/ admin/ extendedmodlog/   # Phase 2
+└── tests/                      # Vitest: Loader, Config-API, Rechte, Parser, Dispatcher, Phase-2-Cogs
 ```
 
 Zur Laufzeit legt der Bot in `/data` (Docker-Volume) an:
@@ -192,7 +195,8 @@ Alle Befehle funktionieren mit dem Prefix oder per Erwähnung (`@Bot help`). `<�
 | `shutdown` / `restart` | Owner | herunterfahren / neu starten |
 | `invite` | Owner | Einladungslink |
 | `traceback [n]` | Owner | letzte unerwartete Fehler per DM |
-| `tasks` | Owner | geplante Tasks mit nächstem Lauf |
+| `tasks` / `tasks run <besitzer> <name>` | Owner | geplante Tasks anzeigen / sofort ausführen |
+| `autoimmune` / `add` / `remove` / `check` | Admin | Ausnahmen von Automod, Filter und Einladungssperre (Mods+ sind immer ausgenommen) |
 
 **Fehlermeldungen** sind lesbar: falsche Argumente zeigen die Verwendung, fehlende Rechte nennen die
 nötige Stufe bzw. Berechtigung, Cooldowns die Wartezeit. Unerwartete Fehler bekommen eine Fehler-ID,
@@ -376,6 +380,175 @@ Vorlage: [`cogs/example/index.ts`](cogs/example/index.ts).
 
 ---
 
+## Cogs im Detail
+
+Alle Cogs lädst du mit `!load <name>`. Abhängigkeiten (z. B. `modlog`) lädt der Bot automatisch mit.
+Mit `!help <cog>` siehst du alle Befehle und mit `!help <befehl>` die Details.
+**Annahme** heißt: So funktioniert es bei Red oder es liegt nahe, eine 1:1-Vorlage gibt es nicht.
+
+### Querschnitt
+
+- **Immunität:** Filter, Automod, Einladungssperre und ReTrigger (Löschen/Kick/Bann) ignorieren Mods,
+  Admins, den Serverbesitzer und Einträge aus `!autoimmune add @user|@rolle`.
+- **Hierarchie:** Moderationsbefehle verweigern Aktionen gegen Mitglieder mit gleicher oder höherer
+  Rolle (abschaltbar mit `!modset hierarchy aus`), gegen den Serverbesitzer und gegen den Bot. Liegt die
+  Rolle des Bots zu niedrig, sagt er das.
+- **Fälle:** Alle Moderationsaktionen (auch automatische) legen über `modlog` einen Fall an.
+- **Cog-Schnittstellen:** Cogs nutzen einander über `cog.expose()` und `bot.cogApi('name')`, z. B.
+  `warnings` → `mutes`, `automod` → `warnings`.
+
+### example · permissions · downloader (Phase 1)
+
+Siehe [Berechtigungen](#berechtigungen) und [Downloader](#downloader-cogs-aus-git-repos). `example` ist die Vorlage für eigene Cogs.
+
+### modlog
+
+Fälle (Cases) mit fortlaufender Nummer pro Server, wie bei Red.
+
+| Befehl | Stufe | |
+|---|---|---|
+| `modlogset channel [#kanal]` | Admin | Log-Kanal (ohne Angabe: Posten aus, Fälle werden weiter gespeichert) |
+| `modlogset cases` / `modlogset toggle <aktion>` | Admin | welche Aktionen geloggt werden (`filterhit`, `inviteblock`, `rename` sind standardmäßig aus) |
+| `modlogset resetcases` | Serverbesitzer | alle Fälle löschen |
+| `case <nr>` · `casesfor <user>` · `listcases <user>` | Mod | Fälle ansehen (ausführlich bzw. kompakt) |
+| `reason [nr] <grund>` | Mod | Grund nachtragen; ohne Nummer gilt dein letzter Fall. Fremde Fälle nur Admins |
+
+### mod
+
+| Befehl | Stufe (alternativ Recht) | |
+|---|---|---|
+| `kick <user> [grund]` | Mod (Kicken) | |
+| `ban <user\|id> [tage 0–7] [grund]` | Mod (Bannen) | auch per ID (Fall-Typ `hackban`) |
+| `tempban <user> <dauer> [grund]` | Mod (Bannen) | wird automatisch aufgehoben (Prüfung jede Minute) |
+| `softban <user> [grund]` | Mod (Bannen) | Bann + Entbannung: entfernt die Nachrichten des letzten Tages |
+| `unban <id> [grund]` | Mod (Bannen) | |
+| `timeout <user> <dauer> [grund]` / `untimeout` | Mod (Moderieren) | max. 28 Tage (**Annahme**, wie bei Discord) |
+| `rename <user> [nick]` | Mod (Nicknames) | ohne Nick: zurücksetzen |
+| `slowmode [intervall]` | Mod (Kanäle) | 0–6 h |
+| `voicekick <user>` | Mod (Verschieben) | trennt vom Sprachkanal |
+| `userinfo [user]` | Jeder | Rollen, Beitritt, Timeout, Anzahl Fälle (nur für Mods) |
+| `modset show\|dm\|deletedays\|hierarchy` | Admin | DM vor der Aktion, Standard-Löschtage, Hierarchie |
+
+Dauern: `30s`, `10m`, `2h`, `3d`, `1w`, kombinierbar wie `1h30m`.
+
+### mutes
+
+- `mute <user> [dauer] [grund]`: mit Mute-Rolle (`muteset role`), sonst per **Timeout**. Ohne Dauer gilt die
+  Standarddauer (`muteset defaulttime`). Ohne Standarddauer bleibt eine Rollen-Stummschaltung dauerhaft, ein
+  Timeout dauert 28 Tage.
+- `unmute`, `channelmute <user> [dauer] [grund]`, `channelunmute`: Kanal-Stummschaltung per Mitglieds-Overwrite
+  (verbietet Schreiben, Reagieren, Sprechen). Vorherige Overwrites werden wiederhergestellt.
+- `activemutes`: Liste. `muteset makerole [name]` erstellt eine Mute-Rolle und sperrt sie in allen Kanälen.
+- Ablauf: Eine Prüfung alle 30 s hebt auf und legt einen Fall `unmute` an. **Sticky:** Wer stummgeschaltet
+  geht und zurückkommt, bekommt die Mute-Rolle wieder.
+
+### warnings
+
+- `warn <user> [punkte] <grund | vordefinierter grund>`: Standard 1 Punkt.
+- `warnings [user]` (eigene für alle, fremde nur Mods), `unwarn <user> <id>`.
+- `warnreason add <name> <punkte> <beschreibung>` / `delete` / `list`.
+- `warnaction add <name> <punkte> <kick|ban|timeout|mute> [dauer]`: Wird eine Schwelle durch eine Verwarnung
+  **neu** erreicht, führt der Bot die höchste davon aus.
+- `warningset dm|customreasons|showmoderator|warnchannel`.
+
+### cleanup
+
+`cleanup messages <n>` · `user <user> <n>` · `text <n> <text>` · `bot <n>` (Bot-Nachrichten und Befehle) ·
+`self <n>` · `duplicates <n>` · `after <nachricht>` · `before <nachricht> <n>` · `between <von> <bis>`
+
+- Höchstens 1000 Nachrichten, ab 100 fragt der Bot per ✅ nach.
+- Gelöscht wird per Bulk-Delete in 100er-Blöcken. Nachrichten älter als 14 Tage oder ein abgelehnter
+  Bulk-Delete werden einzeln gelöscht (**Annahme:** 14-Tage-Grenze wie bei Discord).
+- Nachrichtenverweis = Link `…/channels/<server>/<kanal>/<nachricht>`, `<kanal>-<nachricht>` oder die ID.
+
+### filter
+
+- `filter add|delete <begriffe…>`: Ganze Wörter, ohne Groß/Klein. `*` ist Platzhalter (`spam*`), Phrasen in
+  Anführungszeichen. Die Befehlsnachricht wird gelöscht.
+- `filter list` (per DM), `filter clear`, `filter channel add|delete|list|clear` für einzelne Kanäle.
+- Bearbeitete Nachrichten werden ebenfalls geprüft.
+- `filter names an` ersetzt anstößige Nicknames durch `filter defaultname`.
+- `filter ban <anzahl> <zeitraum>`: automatischer Bann nach wiederholten Treffern.
+
+### automod
+
+`automod` zeigt den Status, `automod toggle an` schaltet ein.
+
+| Regel | Standard | Parameter |
+|---|---|---|
+| `spam` | an, Timeout 10 min | `max` Nachrichten in `seconds` (6 in 8 s) |
+| `mentions` | an, Timeout 1 h | `max` Erwähnungen pro Nachricht (6) |
+| `duplicates` | an, löschen | `max` gleiche Nachrichten in `seconds` (4 in 60 s) |
+| `caps` | aus | `percent` (75) ab `minLength` Buchstaben (15) |
+| `links` | aus | Erlaubnisliste: `automod allowlink youtube.com` |
+| `emojis` | aus | `max` (12) |
+| `newlines` | aus | `max` Zeilen (25) |
+
+- Aktionen: `delete`, `warn` (über `warnings`), `timeout`, `kick`, `ban`. Löschen passiert immer.
+- Befehle: `automod rule <regel> an|aus`, `automod action <regel> <aktion> [dauer]`,
+  `automod set <regel> <parameter> <wert>`, `automod ignore #kanal|@rolle`, `automod log #kanal`, `automod reset`.
+- **Annahme:** Reds Kern hat kein „automod“. Die Regeln oben sind die übliche Auswahl.
+
+### retrigger
+
+- `retrigger text|dm|react|delete|command|kick|ban <name> <regex> [antwort]`
+- Regex mit Leerzeichen in Anführungszeichen, `(?i)` am Anfang = ohne Groß/Klein.
+- Platzhalter: `{user}`, `{user.name}`, `{channel}`, `{server}`, `{count}`, `{1}`… (Gruppen).
+- `retrigger list|info|remove|toggle|cooldown|ignore`.
+- Nur für Admins: JavaScript-Regex lassen sich nicht abbrechen, deshalb gibt es ein Längenlimit und eine
+  Prüfung auf verschachtelte Quantoren.
+- Nachrichten mit Befehls-Prefix lösen nur Lösch-Trigger aus (verhindert Schleifen).
+
+### inviteblocklist
+
+- `inviteblock toggle an`, `inviteblock mode alle|liste`, `inviteblock allow add|remove <code|server-id>`,
+  `inviteblock block add|remove …`, `inviteblock ownserver an|aus`, `inviteblock notify an|aus`, `inviteblock check <link>`.
+- Erkennt **(Annahme)** `fluxer.gg/<code>`, `<deine-instanz>/invite/<code>`, `web.fluxer.app/invite/<code>` sowie
+  Discord-Einladungen.
+- Den Zielserver ermittelt der Bot über `GET /invites/<code>` (1 h zwischengespeichert).
+
+### reports
+
+- `report [@user] <text>`: im Server (die Nachricht wird gelöscht, die Bestätigung kommt per DM) oder **per DM an
+  den Bot**. Bei mehreren gemeinsamen Servern fragt der Bot per 1️⃣–🔟, welcher gemeint ist.
+- Im Team-Kanal (`reportset output #kanal`) erscheint ein Embed mit ✅. Ein Mod reagiert damit, die Meldung gilt
+  als erledigt, und die meldende Person bekommt optional eine DM.
+- `reports` listet offene Meldungen.
+- **Annahme:** Reds „report interact“ (Live-Chat mit der meldenden Person) ist nicht umgesetzt.
+
+### roletools
+
+- **Reaktionsrollen (statt Buttons):** `roletools reaction add <nachricht> <emoji> <@rolle>`, `remove`, `list`.
+  Reaktion entfernen = Rolle entfernen.
+- `roletools auto <rolle> an`: beim Beitritt vergeben. `roletools sticky <rolle> an`: beim erneuten Beitritt
+  wiederherstellen.
+- `roletools exclusive add <rolle> <andere…>` (schließen sich gegenseitig aus), `roletools required add <rolle> <rollen…>`
+  (eine davon wird benötigt), `roletools info <rolle>`.
+
+### alias
+
+- `alias add <name> <befehl …>`: Mod oder „Server verwalten“. `alias delete|list|show`.
+- `alias global add|delete|list` ist nur für den Owner.
+- Zusätzliche Argumente werden angehängt (`!b @user Spam` → `!ban @user Spam`). Aliase auf Aliase gehen bis Tiefe 5.
+
+### admin
+
+- `addrole <rolle> [user]`, `removerole <rolle> [user]`, `editrole color <rolle> <#hex|name>`, `editrole name <rolle> <name>`
+- `selfrole <rolle>` / `selfrole remove <rolle>` / `selfrole list`. Festlegen mit `selfroleset add|remove <rollen…>`.
+- `announce <text>` (Owner) geht an alle Server mit `announceset channel #kanal`. `announceset ignore` schaltet das für einen Server ab.
+- `serverlock` (Owner): Neue Server verlässt der Bot sofort.
+
+### extendedmodlog
+
+- `extmodlog channel #kanal`, dann `extmodlog toggle alle an` (oder einzelne Events).
+- `extmodlog eventchannel <event> #kanal` setzt einen eigenen Kanal pro Event. `extmodlog ignore #kanal|kategorie`
+  und `extmodlog bots an|aus` steuern Ausnahmen.
+- Events: gelöschte/bearbeitete Nachrichten (auch Bulk), Beitritte/Austritte, Bann/Entbannung,
+  Nickname- und Rollenänderungen, Rollen erstellt/gelöscht/geändert, Kanäle erstellt/gelöscht/geändert,
+  Sprachkanal betreten/verlassen/gewechselt, Einladungen, benutzte Befehle.
+- **Hinweis:** Fluxer schickt beim Löschen nur die ID. Den Inhalt kennt der Bot nur aus seinem
+  Nachrichten-Cache (die letzten 5000 Nachrichten seit dem Start).
+
 ## Cog-Status
 
 Legende: ✅ fertig · ⏳ geplant · ⚠️ geplant, aber von Fluxer-Fähigkeiten abhängig (ggf. Stub)
@@ -386,20 +559,20 @@ Legende: ✅ fertig · ⏳ geplant · ⚠️ geplant, aber von Fluxer-Fähigkeit
 | **example** | 1 | ✅ | Beispiel/Vorlage (hello, echo, Menüs, Task) |
 | **permissions** | 1 (vorgezogen aus 2) | ✅ | Regeln pro Befehl/Cog |
 | **downloader** | 1 (Erweiterungen in 5) | ✅ | Repos, install/update/uninstall |
-| admin | 2 | ⏳ | |
-| alias | 2 | ⏳ | nutzt Bot-Event `commandNotFound` |
-| mod (kick/ban/unban/timeout) | 2 | ⏳ | Timeout über `communication_disabled_until` |
-| modlog | 2 | ⏳ | |
-| extendedmodlog | 2 | ⏳ | |
-| mutes | 2 | ⏳ | |
-| warnings | 2 | ⏳ | |
-| automod | 2 | ⏳ | |
-| filter | 2 | ⏳ | |
-| retrigger | 2 | ⏳ | |
-| inviteblocklist | 2 | ⏳ | |
-| cleanup | 2 | ⏳ | |
-| reports | 2 | ⏳ | |
-| roletools | 2 | ⏳ | Reaktionsrollen statt Buttons |
+| admin | 2 | ✅ |  |
+| alias | 2 | ✅ |  |
+| mod (kick/ban/unban/timeout) | 2 | ✅ | tempban, softban, rename, slowmode, voicekick, userinfo |
+| modlog | 2 | ✅ |  |
+| extendedmodlog | 2 | ✅ |  |
+| mutes | 2 | ✅ | Rolle oder Timeout, Kanal-Mutes |
+| warnings | 2 | ✅ | Punkte + Eskalation |
+| automod | 2 | ✅ | 7 Regeln |
+| filter | 2 | ✅ |  |
+| retrigger | 2 | ✅ |  |
+| inviteblocklist | 2 | ✅ |  |
+| cleanup | 2 | ✅ |  |
+| reports | 2 | ✅ |  |
+| roletools | 2 | ✅ | Reaktionsrollen statt Buttons |
 | general | 3 | ⏳ | |
 | customcom | 3 | ⏳ | |
 | welcome | 3 | ⏳ | |
@@ -451,6 +624,11 @@ als *Annahme* markiert.
 | Embeds | Discord-kompatibles Format (`rich`) | mit Text-Fallback |
 | Nachrichtenlänge | **Annahme:** 2000 Zeichen | lange Texte werden automatisch geteilt |
 | Audit-Log-Grund | **Annahme:** Header `X-Audit-Log-Reason` | – |
+| Gelöschte Nachrichten | `MESSAGE_DELETE` enthält nur IDs | eigener Nachrichten-Cache (5000) für Lösch-/Bearbeitungs-Logs |
+| Bulk-Delete | `POST /channels/{id}/messages/bulk-delete`; **Annahme:** 14-Tage-Grenze | ältere Nachrichten einzeln, Fallback bei Fehler |
+| Rollen/Overwrites | Discord-kompatible Routen (`/guilds/{id}/roles`, `/channels/{id}/permissions/{id}`) | – |
+| Einladungslinks | **Annahme:** `fluxer.gg/<code>` und `<instanz>/invite/<code>` | inviteblocklist |
+| Nachrichtenlinks | **Annahme:** `<instanz>/channels/<server>/<kanal>/<nachricht>` | Reaktionsrollen, cleanup |
 | Einladungslink | **Annahme:** `{BASE_URL}/oauth2/authorize?client_id=…&scope=bot&permissions=…` | `!invite`, Start-Log |
 | Rate-Limits | 429 + `retry_after` | `@fluxerjs/rest` wartet und wiederholt automatisch (Buckets pro Route, 3 Retries) |
 | Reconnect | RESUME mit Session-ID/Sequenz, sonst neues IDENTIFY | `@fluxerjs/ws`; getestet. Dazu Watchdog (Neustart nach `WATCHDOG_SECONDS`) |
@@ -479,6 +657,9 @@ Die Tests (`tests/`) decken ab:
 - **Config-API:** alle Scopes, Defaults, Namensräume, `update`, `allMembers`, Persistenz
 - **Berechtigungen:** Stufen, alternative Rechte, Regel-Reihenfolge, globale vs. Server-Regeln, Defaults, Kanal-Overwrites
 - **Befehle:** Tokenizer/Parser, Registry, Slash-Export, Cooldowns, Dispatcher Ende-zu-Ende, Embed-Fallback, i18n
+- **Phase 2:** alle 14 Cogs laden konfliktfrei, Kick/Ban/Tempban/Timeout inkl. Fälle und Hierarchie, Mutes (Timeout/Rolle/Kanal, Ablauf),
+  Verwarnungs-Eskalation, Filter, Automod, Einladungssperre, Cleanup (Bulk-Delete), ReTrigger, Alias, Meldungen mit ✅,
+  Reaktions- und Auto-Rollen, addrole, Lösch-Log mit Cache-Inhalt, Hilfe mit allen Cogs
 
 ---
 

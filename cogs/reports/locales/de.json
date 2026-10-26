@@ -1,0 +1,16 @@
+{
+  "embedTitle": "📣 Meldung #{number}",
+  "reporter": "Gemeldet von",
+  "target": "Betrifft",
+  "handledBy": "Erledigt von",
+  "statusOpen": "Offen – ✅ zum Erledigen",
+  "statusDone": "Erledigt",
+  "notConfigured": "Meldungen sind auf diesem Server nicht eingerichtet (reportset output).",
+  "noServer": "Wir haben keinen gemeinsamen Server, auf dem Meldungen eingerichtet sind.",
+  "chooseServer": "Für welchen Server ist die Meldung?",
+  "filed": "✅ Deine Meldung #{number} an das Team von **{server}** ist angekommen. Danke!",
+  "reporterNotified": "Deine Meldung #{number} auf **{server}** wurde vom Team bearbeitet.",
+  "noneOpen": "Keine offenen Meldungen. 🎉",
+  "openTitle": "Offene Meldungen ({count})",
+  "outputSet": "Meldungen landen jetzt in {channel}."
+}

@@ -1,0 +1,24 @@
+{
+  "auditReason": "Wortfilter",
+  "caseReason": "Gefilterter Begriff: {word}",
+  "banReason": "Wortfilter: {count} Treffer innerhalb von {time}",
+  "nameReason": "Name enthält einen gefilterten Begriff",
+  "tooShort": "`{term}` ist zu kurz (mindestens 2 Zeichen ohne *).",
+  "added": {
+    "one": "{count} Begriff zum Filter hinzugefügt.",
+    "other": "{count} Begriffe zum Filter hinzugefügt."
+  },
+  "removed": {
+    "one": "{count} Begriff aus dem Filter entfernt.",
+    "other": "{count} Begriffe aus dem Filter entfernt."
+  },
+  "empty": "Der Filter ist leer.",
+  "listTitle": "Gefilterte Begriffe auf {server}",
+  "channelListTitle": "Gefilterte Begriffe in diesem Kanal",
+  "sentDm": "📬 Ich habe dir die Liste per DM geschickt.",
+  "dmFailed": "Ich kann dir keine DM schicken – bitte DMs von Servermitgliedern erlauben.",
+  "clearConfirm": "Wirklich alle Begriffe aus dem Server-Filter entfernen?",
+  "banOff": "Automatischer Filter-Bann deaktiviert.",
+  "banOn": "Wer {count}× innerhalb von {time} gefiltert wird, wird gebannt.",
+  "banUsage": "Verwendung: `filter ban <anzahl> <zeitraum>` (z. B. `filter ban 3 10m`) oder `filter ban aus`."
+}

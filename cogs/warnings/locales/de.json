@@ -1,0 +1,25 @@
+{
+  "dmWarned": "⚠️ Du wurdest auf **{server}** verwarnt.\nGrund: {reason}\nPunkte: {points} (insgesamt {total}){moderator}",
+  "warned": "⚠️ {user} wurde verwarnt (+{points} P., insgesamt {total} P.).",
+  "escalated": "➡️ Automatische Aktion **{name}**: {action}.",
+  "autoReason": "Verwarnungsschwelle \"{name}\" erreicht – letzter Grund: {reason}",
+  "customDisabled": "Freie Gründe sind deaktiviert. Vordefinierte Gründe: {reasons}",
+  "needReason": "Bitte gib einen Grund an.",
+  "badPoints": "Punkte müssen zwischen 0 und 100 liegen.",
+  "onlyOwn": "Du kannst nur deine eigenen Verwarnungen sehen.",
+  "noWarnings": "{user} hat keine Verwarnungen. 🎉",
+  "listTitle": "Verwarnungen ({total} Punkte)",
+  "warningNotFound": "Diese Verwarnung gibt es für diesen Benutzer nicht.",
+  "unwarned": "Verwarnung #{id} entfernt. Verbleibende Punkte: {total}.",
+  "reasonAdded": "Grund `{name}` gespeichert.",
+  "reasonsTitle": "Vordefinierte Gründe",
+  "actionAdded": "Ab **{points}** Punkten: {action} (\"{name}\").",
+  "actionsTitle": "Automatische Aktionen",
+  "badDuration": "Ungültige Dauer – Beispiele: 30m, 2h, 1d.",
+  "actionNames": {
+    "kick": "Kick",
+    "ban": "Bann",
+    "timeout": "Timeout",
+    "mute": "Stummschaltung"
+  }
+}

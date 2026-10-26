@@ -1,0 +1,8 @@
+{
+  "name": "automod",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Automatische Moderation: Spam, Massen-Erwähnungen, Wiederholungen, Großbuchstaben, Links, Emojis und Zeilenflut – mit einstellbaren Aktionen.",
+  "displayName": "Automod",
+  "endUserData": "Speichert keine Nutzerdaten (Zähler nur kurzzeitig im Speicher)."
+}

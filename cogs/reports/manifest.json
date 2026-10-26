@@ -1,0 +1,8 @@
+{
+  "name": "reports",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Meldungen an das Team – im Server oder per DM, mit Ticketnummer und Erledigt-Markierung per ✅.",
+  "displayName": "Meldungen",
+  "endUserData": "Speichert Meldungen: meldende und gemeldete Benutzer-IDs und den Text der Meldung."
+}

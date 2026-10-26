@@ -1,0 +1,8 @@
+{
+  "name": "modlog",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Moderations-Fälle (Cases) mit fortlaufender Nummer und Log-Kanal – wie Reds ModLog.",
+  "displayName": "ModLog",
+  "endUserData": "Speichert Moderationsfälle: betroffene und moderierende Benutzer-IDs, Benutzernamen und Gründe."
+}

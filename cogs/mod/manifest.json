@@ -1,0 +1,9 @@
+{
+  "name": "mod",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Moderation: kick, ban, tempban, softban, unban, timeout, rename, slowmode, voicekick und userinfo.",
+  "displayName": "Mod",
+  "dependencies": ["modlog"],
+  "endUserData": "Speichert laufende temporäre Banns (Benutzer-ID, Ende, Grund)."
+}

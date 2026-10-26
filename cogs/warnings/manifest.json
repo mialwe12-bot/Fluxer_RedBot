@@ -1,0 +1,9 @@
+{
+  "name": "warnings",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Verwarnungen mit Punkten, vordefinierten Gründen und automatischen Aktionen ab Punkteschwellen.",
+  "displayName": "Verwarnungen",
+  "dependencies": ["modlog"],
+  "endUserData": "Speichert Verwarnungen: Benutzer-ID, Moderator-ID, Punkte, Grund, Zeitpunkt."
+}
