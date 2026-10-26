@@ -1,0 +1,45 @@
+{
+  "hello": {
+    "description": "Sagt Hallo.",
+    "userOption": "Wen begrüßen?",
+    "reply": "Hallo {user}! 👋"
+  },
+  "echo": {
+    "description": "Wiederholt deinen Text (ohne Erwähnungen).",
+    "textOption": "Der Text"
+  },
+  "group": {
+    "description": "Beispiele für Gruppen, Config und Reaktions-Menüs."
+  },
+  "counter": {
+    "description": "Wie oft hast du hello benutzt?",
+    "reply": {
+      "one": "Du hast hier **{count}-mal** Hallo gesagt (insgesamt {total}).",
+      "other": "Du hast hier **{count}-mal** Hallo gesagt (insgesamt {total})."
+    }
+  },
+  "greeting": {
+    "description": "Eigener Gruß für diesen Server ({user} = Platzhalter, \"reset\" = Standard).",
+    "textOption": "Grußtext",
+    "set": "Neuer Gruß: {text}",
+    "reset": "Gruß auf Standard zurückgesetzt."
+  },
+  "pages": {
+    "description": "Zeigt Seiten zum Blättern (⬅️ ➡️).",
+    "title": "Seite {n}",
+    "body": "Das ist Seite {n}. Blättere mit den Reaktionen."
+  },
+  "confirm": {
+    "description": "Ja/Nein-Abfrage per Reaktion.",
+    "question": "Magst du Kekse? 🍪",
+    "yes": "Sehr gut! 🍪",
+    "no": "Schade.",
+    "timeout": "Keine Antwort – auch gut."
+  },
+  "choose": {
+    "description": "Auswahl per Zahlen-Reaktion (1–5).",
+    "title": "Welches Obst?",
+    "picked": "Du hast gewählt: {choice}",
+    "none": "Keine Auswahl getroffen."
+  }
+}

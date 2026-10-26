@@ -1,0 +1,57 @@
+{
+  "group": "Berechtigungsregeln für Befehle und Cogs verwalten.",
+  "scope": {
+    "global": "global",
+    "server": "auf diesem Server"
+  },
+  "labels": {
+    "cog": "Cog `{name}`",
+    "command": "Befehl `{name}`",
+    "server": "alle auf diesem Server",
+    "default": "Standard"
+  },
+  "explain": {
+    "description": "Erklärt, wie Regeln ausgewertet werden.",
+    "title": "So funktionieren Berechtigungsregeln",
+    "text": "Jeder Befehl hat eine Mindeststufe (Jeder, Moderator, Administrator, Serverbesitzer, Bot-Owner). Mod- und Admin-Rollen legst du mit `{prefix}set addmodrole` und `{prefix}set addadminrole` fest; die Server-Berechtigung *Administrator* zählt immer als Admin.\n\nMit Regeln kannst du das anpassen:\n• **Verbieten** sperrt einen Befehl oder einen ganzen Cog für einen Benutzer, eine Rolle, einen Kanal (auch Kategorie oder Voice-Kanal) oder den ganzen Server.\n• **Erlauben** gibt einen Befehl frei, auch wenn die Stufe nicht reicht (nicht für Owner-/Serverbesitzer-Befehle).\n\n**Reihenfolge** – die erste passende Regel gewinnt:\n1. Globale Regeln (Bot-Owner) vor Server-Regeln\n2. Befehl vor übergeordneter Gruppe vor Cog\n3. Benutzer → Voice-Kanal → Kanal → Kategorie → Rollen (höchste zuerst) → Server\n4. Zuletzt Standard-Regeln (`setdefaultserverrule`)\n\nBot-Owner sind von allen Regeln ausgenommen.\n\n**Beispiele**\n`{prefix}perms addserverrule deny #allgemein trivia` – Trivia im #allgemein verbieten\n`{prefix}perms addserverrule allow @Helfer cmd:cleanup messages` – Helfern einen Mod-Befehl erlauben\n`{prefix}perms setdefaultserverrule deny economy` + `{prefix}perms addserverrule allow #casino economy` – Economy nur im #casino"
+  },
+  "list": {
+    "description": "Zeigt die Regeln dieses Servers (oder global).",
+    "empty": "Keine Regeln gesetzt.",
+    "titleServer": "Regeln auf diesem Server",
+    "titleGlobal": "Globale Regeln"
+  },
+  "canrun": {
+    "description": "Prüft, ob ein Benutzer einen Befehl hier ausführen darf.",
+    "yes": {
+      "owner": "✅ {user} darf `{command}` – Bot-Owner.",
+      "rule": "✅ {user} darf `{command}` – durch eine Erlauben-Regel.",
+      "level": "✅ {user} darf `{command}` – Berechtigungsstufe reicht.",
+      "permissions": "✅ {user} darf `{command}` – durch Server-Berechtigungen."
+    },
+    "no": {
+      "rule": "⛔ {user} darf `{command}` nicht – durch eine Verbieten-Regel.",
+      "level": "⛔ {user} darf `{command}` nicht – Berechtigungsstufe reicht nicht."
+    }
+  },
+  "rules": {
+    "addedAllow": "✅ Regel gesetzt ({scope}): {who} **darf** {target}.",
+    "addedDeny": "⛔ Regel gesetzt ({scope}): {who} **darf nicht** {target}.",
+    "removed": "Regel für {who} → {target} entfernt.",
+    "notFound": "Für {who} → {target} gibt es keine Regel.",
+    "defaultAllow": "Standard für {target}: erlaubt.",
+    "defaultDeny": "Standard für {target}: verboten.",
+    "defaultCleared": "Standard-Regel für {target} entfernt.",
+    "clearConfirm": "Wirklich **alle** Regeln ({scope}) löschen?",
+    "cleared": {
+      "one": "{count} Regel gelöscht.",
+      "other": "{count} Regeln gelöscht."
+    }
+  },
+  "errors": {
+    "unknownTarget": "`{target}` ist weder ein Cog noch ein Befehl.",
+    "unknownSubject": "`{who}` ist kein Benutzer, keine Rolle und kein Kanal.",
+    "serverInDm": "\"server\" geht nur auf einem Server.",
+    "globalOwnerOnly": "Globale Regeln kann nur der Bot-Owner sehen."
+  }
+}

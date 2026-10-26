@@ -1,0 +1,77 @@
+{
+  "warning": "⚠️ **Achtung:** Cogs aus fremden Repositories sind Programmcode, der mit **vollen Rechten** auf dem Server des Bots läuft (Dateien, Netzwerk, Token). Installiere nur Cogs aus Quellen, denen du vertraust. Fortfahren?",
+  "repo": {
+    "description": "Git-Repositories als Cog-Quellen verwalten.",
+    "notFound": "Repository `{name}` ist nicht eingetragen.",
+    "add": {
+      "description": "Fügt ein Git-Repository hinzu (https/ssh; für private Repos Token in der URL).",
+      "name": "Kurzname für das Repository",
+      "url": "Git-URL",
+      "branch": "Branch (optional)",
+      "badName": "Der Name darf nur Buchstaben, Zahlen, - und _ enthalten (max. 40 Zeichen).",
+      "badUrl": "Nur https://, ssh:// oder git@-URLs sind erlaubt.",
+      "badBranch": "Ungültiger Branch-Name.",
+      "exists": "Ein Repository namens `{name}` existiert bereits.",
+      "done": "📦 Repository **{name}** (<{url}>) hinzugefügt. {count} Cog(s) gefunden: {cogs}"
+    },
+    "delete": {
+      "description": "Entfernt ein Repository (installierte Cogs bleiben installiert).",
+      "done": "Repository **{name}** entfernt. Bereits installierte Cogs daraus bleiben bestehen: {cogs}"
+    },
+    "list": {
+      "description": "Listet alle Repositories.",
+      "title": "Repositories",
+      "empty": "Noch keine Repositories. Füge eins mit `{prefix}repo add <name> <url>` hinzu."
+    },
+    "info": {
+      "description": "Details zu einem Repository.",
+      "title": "Repository {name}",
+      "defaultBranch": "Standard",
+      "cogs": "Cogs ({count})"
+    },
+    "update": {
+      "description": "Holt die neueste Version der Repositories (installiert nichts).",
+      "names": "Repository-Namen (leer = alle)",
+      "unchanged": "keine Änderungen",
+      "hint": "Installierte Cogs aktualisierst du mit `{prefix}cog update`."
+    }
+  },
+  "cog": {
+    "description": "Cogs aus Repositories installieren, aktualisieren und entfernen.",
+    "repoOption": "Repository-Name",
+    "cogsOption": "Cog-Name(n)",
+    "notInRepo": "Cog `{cog}` gibt es im Repository `{repo}` nicht.",
+    "notInstalled": "`{cog}` wurde nicht über den Downloader installiert.",
+    "install": {
+      "description": "Installiert Cogs aus einem Repository.",
+      "done": "`{cog}` installiert.",
+      "overrides": "`{cog}` ersetzt den mitgelieferten Cog gleichen Namens.",
+      "reloadHint": "`{cog}` ist geladen – mit `{prefix}reload {cog}` die neue Version aktivieren.",
+      "loadHint": "Laden mit `{prefix}load <cog>`."
+    },
+    "uninstall": {
+      "description": "Entlädt und entfernt installierte Cogs (Config-Daten bleiben erhalten).",
+      "done": "`{cog}` deinstalliert.",
+      "self": "Der Downloader kann sich nicht selbst deinstallieren."
+    },
+    "update": {
+      "description": "Aktualisiert installierte Cogs und lädt geladene neu.",
+      "unchanged": "`{cog}` ist aktuell.",
+      "done": "`{cog}` auf {version} aktualisiert.",
+      "reloaded": "`{cog}` auf {version} aktualisiert und neu geladen."
+    },
+    "list": {
+      "description": "Installierte Cogs oder Cogs eines Repositories auflisten.",
+      "installedTitle": "Installierte Cogs",
+      "repoTitle": "Cogs in {repo}",
+      "noneInstalled": "Es sind keine Cogs über den Downloader installiert.",
+      "emptyRepo": "Im Repository `{repo}` wurden keine Cogs gefunden (Ordner mit manifest.json im Wurzelverzeichnis oder unter cogs/)."
+    },
+    "info": {
+      "description": "Details zu einem Cog in einem Repository.",
+      "author": "Autor",
+      "dependencies": "Abhängigkeiten",
+      "endUserData": "Gespeicherte Nutzerdaten"
+    }
+  }
+}

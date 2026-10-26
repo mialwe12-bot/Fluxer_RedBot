@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@bot/sdk": ["./src/sdk/index.ts"]
+    },
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": ["src", "cogs", "tests", "vitest.config.ts"]
+}

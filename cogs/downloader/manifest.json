@@ -1,0 +1,8 @@
+{
+  "name": "downloader",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Git-Repositories (z. B. Forgejo, GitHub) als Cog-Quellen: Cogs installieren, aktualisieren und entfernen.",
+  "displayName": "Downloader",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

@@ -1,0 +1,8 @@
+{
+  "name": "permissions",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Regeln pro Befehl oder Cog: erlauben/verbieten für Benutzer, Rollen, Kanäle oder ganze Server – global (Owner) oder pro Server (Admins).",
+  "displayName": "Berechtigungen",
+  "endUserData": "Speichert Benutzer-, Rollen- und Kanal-IDs in Berechtigungsregeln."
+}

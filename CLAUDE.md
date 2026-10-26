@@ -1,0 +1,37 @@
+# Projektkontext für Claude
+
+Modularer Fluxer-Bot nach Red-DiscordBot-Vorbild. Alle Bot-Texte, das README und die Antworten sind auf Deutsch, über i18n (`locales/de.json`, `cogs/*/locales/de.json`).
+
+## Zielumgebung
+- Selbst gehostete Fluxer-Instanz: https://chat.nebendahl.eu (API-Annahme: `/api`, Version v1, Discovery über `/.well-known/fluxer`)
+- Jellyfin des Nutzers: jellyfin.mrcoolgamer.de (Phase 4 jellyfinmusic)
+- Cog-Quellen: Forgejo des Nutzers (Downloader, HTTPS mit Token)
+- Betrieb per Docker Compose, Volume `/data`
+
+## Architekturentscheidungen
+- Transport: `@fluxerjs/rest` + `@fluxerjs/ws` (rohe Payloads, eigener Cache in `src/platform/platform.ts`)
+- Cogs werden beim Laden mit esbuild zu einer ESM-Datei in `.cogcache/` gebündelt und per `import()` geladen. Das ist der Hot-Reload, inklusive Untermodulen.
+- `@bot/sdk` (`src/sdk/index.ts`) ist zustandslos und wird in jeden Cog gebündelt. Fehlerklassen erkennt der Bot deshalb am `name`, nicht per `instanceof`.
+- Config: SQLite-Tabelle `config(namespace, scope, scope_id, key, value)`, synchrone API
+- Rechte: `src/permissions/permissions.ts`, Tabelle `permission_rules`, Red-Reihenfolge
+- Befehle im Slash-Format (`src/commands/types.ts`), Prefix-Erweiterungen `rest`/`variadic`
+- Beschreibungen gettext-artig übersetzbar (deutscher Text = Schlüssel)
+
+## Fluxer-Fakten (Recherche Okt. 2026)
+- Keine Intents, keine Interactions/Buttons/Slash-Commands
+- Gateway-URL aus `GET /gateway/bot`, unverändert nutzen
+- Voice: VOICE_STATE_UPDATE ja; Audio über LiveKit (op 4 → VOICE_SERVER_UPDATE-Grant, 600 s), `@fluxerjs/voice` existiert, ungetestet
+- PRESENCE_UPDATE hat `activities`; ob Spiele gemeldet werden, ist unklar
+- Member-PATCH: `channel_id` (verschieben), `communication_disabled_until` + `timeout_reason` (Timeout)
+
+## Phasen
+1. Kern + example/permissions/downloader ✅
+2. admin, alias, mod, modlog, extendedmodlog, mutes, warnings, automod, filter, retrigger, inviteblocklist, cleanup, reports, roletools
+3. general, customcom, welcome, suggestions, tickets, levelup, badges, economy, trivia, bingo, conversions, eventposter, streams, image, instadl
+4. afkchannel, untis, animewatch, dailystats, birthday, gameblacklist, jellyfinmusic
+5. audio, Downloader-Erweiterungen
+
+Nach jeder Phase fragt Claude, ob es weitergeht.
+
+## Befehle
+- `npm test`, `npm run typecheck`, `npm run build`

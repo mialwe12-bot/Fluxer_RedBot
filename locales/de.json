@@ -1,0 +1,197 @@
+{
+  "common": {
+    "cancelled": "Abgebrochen.",
+    "timeout": "Keine Antwort erhalten – abgebrochen.",
+    "yes": "Ja",
+    "no": "Nein",
+    "none": "keine",
+    "enabled": "aktiviert",
+    "disabled": "deaktiviert"
+  },
+  "perm": {
+    "levels": {
+      "everyone": "Jeder",
+      "mod": "Moderator",
+      "admin": "Administrator",
+      "guildowner": "Serverbesitzer",
+      "owner": "Bot-Owner"
+    }
+  },
+  "errors": {
+    "guildOnly": "Dieser Befehl funktioniert nur auf einem Server.",
+    "dmOnly": "Dieser Befehl funktioniert nur per Direktnachricht.",
+    "cooldown": "Langsam! Du kannst diesen Befehl in {time} wieder benutzen.",
+    "botMissing": "Mir fehlen hier die nötigen Rechte: {perms}.",
+    "unexpected": "Beim Ausführen ist ein unerwarteter Fehler aufgetreten (Fehler-ID `{id}`). Der Bot-Owner kann ihn mit `traceback` ansehen.",
+    "usage": "Verwendung: `{usage}`",
+    "helpHint": "Mehr dazu: `{prefix}help {command}`",
+    "unknownSubcommand": "Unbekannter Unterbefehl `{sub}` für `{command}`.",
+    "perm": {
+      "denied": "Du darfst diesen Befehl hier nicht benutzen.",
+      "level": "Dafür brauchst du mindestens die Stufe **{level}**.",
+      "levelOrPerms": "Dafür brauchst du die Stufe **{level}** oder die Berechtigung(en): {perms}."
+    },
+    "args": {
+      "missing": "Das Argument `{name}` fehlt.",
+      "missingAttachment": "Bitte hänge eine Datei an (`{name}`).",
+      "tooMany": "Zu viele Argumente: `{extra}`",
+      "notNumber": "`{value}` ist keine Zahl.",
+      "notInteger": "`{value}` ist keine ganze Zahl.",
+      "minValue": "`{name}` muss mindestens {min} sein.",
+      "maxValue": "`{name}` darf höchstens {max} sein.",
+      "minLength": "`{name}` muss mindestens {min} Zeichen lang sein.",
+      "maxLength": "`{name}` darf höchstens {max} Zeichen lang sein.",
+      "notBoolean": "`{value}` ist kein Ja/Nein-Wert (erlaubt: ja, nein, an, aus).",
+      "userNotFound": "Benutzer `{value}` nicht gefunden.",
+      "roleNotFound": "Rolle `{value}` nicht gefunden.",
+      "channelNotFound": "Kanal `{value}` nicht gefunden.",
+      "channelType": "Der Kanal `{value}` hat hier den falschen Typ.",
+      "mentionableNotFound": "`{value}` ist weder ein Benutzer noch eine Rolle.",
+      "choice": "`{value}` ist für `{name}` nicht erlaubt. Möglich: {choices}"
+    }
+  },
+  "cogs": {
+    "title": "Cogs",
+    "loaded": "Geladen: {cogs}",
+    "unloaded": "Entladen: {cogs}",
+    "reloaded": "Neu geladen: {cogs}",
+    "alsoAffected": "Ebenfalls (neu) geladen: {cogs}",
+    "failed": "Fehler:",
+    "loadedCount": {
+      "one": "{count} geladen:",
+      "other": "{count} geladen:"
+    },
+    "unloadedCount": {
+      "one": "{count} nicht geladen:",
+      "other": "{count} nicht geladen:"
+    },
+    "errors": {
+      "notFound": "Cog `{name}` nicht gefunden.",
+      "alreadyLoaded": "Cog `{name}` ist bereits geladen.",
+      "notLoaded": "Cog `{name}` ist nicht geladen.",
+      "internal": "Der Kern-Cog `{name}` kann nicht entladen werden.",
+      "hasDependents": "`{name}` wird noch benötigt von: {dependents}. Diese zuerst entladen.",
+      "missingDependency": "`{name}` benötigt den Cog `{dependency}`, der nicht installiert ist.",
+      "cycle": "Zirkuläre Abhängigkeit bei `{name}`.",
+      "noManifest": "Keine manifest.json in `{dir}`.",
+      "badManifest": "manifest.json in `{dir}` ist ungültig: {reason}",
+      "noEntry": "Cog `{name}` hat keine index.ts/index.js.",
+      "noSetup": "Cog `{name}` exportiert kein `defineCog(...)` als default.",
+      "build": "Cog `{name}` konnte nicht kompiliert werden: {reason}",
+      "setup": "Fehler beim Einrichten von `{name}`: {reason}",
+      "timeout": "`{name}` hat zu lange gebraucht (>{seconds} s)."
+    }
+  },
+  "help": {
+    "title": "Hilfe für {name}",
+    "intro": "Tippe `{prefix}help <Befehl>` für Details oder `{prefix}help <Kategorie>` für einen Cog.",
+    "continued": "Fortsetzung",
+    "nothing": "Es gibt keine Befehle, die du hier benutzen kannst.",
+    "notFound": "Zu `{query}` gibt es keinen Befehl und keine Kategorie (oder du darfst sie nicht benutzen).",
+    "noCommands": "Keine Befehle verfügbar.",
+    "page": "Seite {page}/{total}",
+    "footer": "Kategorie: {category}",
+    "cogFooter": "Version {version} • von {author}",
+    "aliases": "Aliase",
+    "permission": "Berechtigung",
+    "cooldown": "Cooldown",
+    "cooldownValue": "{rate}× pro {per} s",
+    "options": "Argumente",
+    "subcommands": "Unterbefehle",
+    "subcommand": "unterbefehl",
+    "examples": "Beispiele",
+    "required": "Pflicht",
+    "optional": "optional",
+    "choices": "Möglich",
+    "default": "Standard",
+    "types": {
+      "string": "Text",
+      "integer": "ganze Zahl",
+      "number": "Zahl",
+      "boolean": "ja/nein",
+      "user": "Benutzer",
+      "channel": "Kanal",
+      "role": "Rolle",
+      "mentionable": "Benutzer/Rolle",
+      "attachment": "Anhang"
+    }
+  },
+  "core": {
+    "ping": {
+      "latency": "({ms} ms)"
+    },
+    "info": {
+      "title": "Über {name}",
+      "description": "Modularer Fluxer-Bot nach dem Vorbild von Red-DiscordBot: schlanker Kern, Funktionen als Cogs, die sich zur Laufzeit laden lassen.",
+      "version": "Version",
+      "instance": "Fluxer-Instanz",
+      "servers": "Server",
+      "cogs": "Geladene Cogs",
+      "commands": "Befehle",
+      "uptime": "Laufzeit",
+      "prefix": "Prefix",
+      "memory": "Speicher",
+      "owners": "Owner"
+    },
+    "uptime": "Online seit {since} ({duration}).",
+    "invite": "Einladungslink: <{url}>",
+    "inviteUnknown": "Die Application-ID ist noch unbekannt – ist der Bot verbunden?",
+    "prefix": {
+      "current": "Prefix(e) hier: {prefixes} – du kannst mich auch mit {mention} ansprechen.",
+      "set": "Prefix für diesen Server gesetzt: {prefixes}",
+      "reset": "Server-Prefix zurückgesetzt. Es gilt wieder: {prefixes}",
+      "global": "Globale Prefixe: {prefixes}"
+    },
+    "set": {
+      "name": "Mein Name ist jetzt **{name}**.",
+      "avatar": "Avatar aktualisiert.",
+      "avatarRemoved": "Avatar entfernt.",
+      "avatarMissing": "Gib eine Bild-URL an oder hänge ein Bild an.",
+      "status": "Status: **{status}**, Text: {text}",
+      "locale": "Sprache: **{locale}**",
+      "localeUnknown": "Diese Sprache gibt es nicht. Verfügbar: {locales}",
+      "embedsOn": "Embeds sind jetzt aktiviert.",
+      "embedsOff": "Embeds sind jetzt deaktiviert – ich antworte nur mit Text."
+    },
+    "roles": {
+      "already": "**{role}** ist bereits eingetragen.",
+      "notSet": "**{role}** ist nicht eingetragen.",
+      "added": {
+        "admin": "**{role}** ist jetzt eine Admin-Rolle.",
+        "mod": "**{role}** ist jetzt eine Mod-Rolle."
+      },
+      "removed": {
+        "admin": "**{role}** ist keine Admin-Rolle mehr.",
+        "mod": "**{role}** ist keine Mod-Rolle mehr."
+      }
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "globalPrefix": "Globales Prefix",
+      "serverPrefix": "Server-Prefix",
+      "locale": "Sprache",
+      "embeds": "Embeds",
+      "adminRoles": "Admin-Rollen",
+      "modRoles": "Mod-Rollen"
+    },
+    "shutdown": "Fahre herunter … 👋",
+    "restart": "Starte neu … 🔄",
+    "owner": {
+      "list": "**Bot-Owner:**",
+      "app": "Application-Owner",
+      "confirm": "⚠️ {user} bekommt damit **vollen Zugriff** auf den Bot, inklusive Installation von fremdem Code. Wirklich hinzufügen?",
+      "added": "{user} ist jetzt Owner.",
+      "removed": "{user} ist kein Owner mehr.",
+      "already": "Dieser Benutzer ist bereits Owner.",
+      "notOwner": "Dieser Benutzer ist kein (per Befehl hinzugefügter) Owner.",
+      "envOwner": "Dieser Owner ist in der .env (BOT_OWNER_IDS) eingetragen und kann nur dort entfernt werden."
+    },
+    "traceback": {
+      "none": "Seit dem Start sind keine unerwarteten Fehler aufgetreten. 🎉"
+    },
+    "tasks": {
+      "title": "Geplante Tasks",
+      "none": "Keine geplanten Tasks."
+    }
+  }
+}

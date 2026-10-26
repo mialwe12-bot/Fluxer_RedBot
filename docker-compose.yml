@@ -1,0 +1,23 @@
+services:
+  bot:
+    build: .
+    image: fluxer-redbot:latest
+    container_name: fluxer-redbot
+    # Startet nach Absturz, Watchdog-Exit, `!restart` und Server-Neustart automatisch neu.
+    # Hinweis: Auch `!shutdown` führt deshalb zu einem Neustart – dauerhaft stoppen mit `docker compose stop`.
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+      TZ: ${TZ:-Europe/Berlin}
+    volumes:
+      - bot-data:/data
+    # Kein eingehender Port nötig: der Bot verbindet sich nur ausgehend (REST + WebSocket).
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  bot-data:

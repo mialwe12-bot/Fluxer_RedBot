@@ -1,0 +1,10 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Beispiel-Cog: zeigt Befehle, Gruppen, Config, Cooldowns, Reaktions-Menüs, Listener und geplante Tasks.",
+  "displayName": "Beispiel",
+  "dependencies": [],
+  "endUserData": "Speichert pro Mitglied, wie oft es `hello` benutzt hat.",
+  "tags": ["beispiel", "vorlage"]
+}
