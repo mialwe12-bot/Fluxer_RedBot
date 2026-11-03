@@ -19,6 +19,11 @@ ENV NODE_ENV=production \
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git ca-certificates tzdata tini \
  && rm -rf /var/lib/apt/lists/*
+# yt-dlp (eigenständige Linux-Binärdatei) für instadl und später Audio-Cogs.
+# Instagram ändert häufig etwas – bei Problemen Image neu bauen (holt die neueste Version).
+# Feste Version möglich: --build-arg YTDLP_URL=https://github.com/yt-dlp/yt-dlp/releases/download/<version>/yt-dlp_linux
+ARG YTDLP_URL=https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux
+ADD --chmod=755 ${YTDLP_URL} /usr/local/bin/yt-dlp
 WORKDIR /app
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist

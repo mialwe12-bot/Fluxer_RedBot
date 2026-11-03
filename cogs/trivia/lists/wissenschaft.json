@@ -1,0 +1,171 @@
+{
+  "name": "Wissenschaft & Technik",
+  "description": "25 Fragen",
+  "author": "fluxer-redbot",
+  "questions": [
+    {
+      "question": "Was ist die chemische Formel von Wasser?",
+      "answers": [
+        "H2O"
+      ]
+    },
+    {
+      "question": "Wie viele Planeten hat unser Sonnensystem?",
+      "answers": [
+        "8",
+        "acht"
+      ]
+    },
+    {
+      "question": "Bei wie viel Grad Celsius siedet Wasser auf Meereshöhe?",
+      "answers": [
+        "100",
+        "hundert"
+      ]
+    },
+    {
+      "question": "Wer stellte die Relativitätstheorie auf?",
+      "answers": [
+        "Albert Einstein",
+        "Einstein"
+      ]
+    },
+    {
+      "question": "Welches Organ pumpt das Blut durch den Körper?",
+      "answers": [
+        "Herz"
+      ]
+    },
+    {
+      "question": "Wie heißt der rote Planet?",
+      "answers": [
+        "Mars"
+      ]
+    },
+    {
+      "question": "Wie viele Knochen hat ein erwachsener Mensch ungefähr?",
+      "answers": [
+        "206"
+      ]
+    },
+    {
+      "question": "Was misst man in Hertz?",
+      "answers": [
+        "Frequenz"
+      ]
+    },
+    {
+      "question": "Welches Gas atmen Pflanzen bei der Fotosynthese ein?",
+      "answers": [
+        "Kohlendioxid",
+        "CO2",
+        "Kohlenstoffdioxid"
+      ]
+    },
+    {
+      "question": "Wie viele Bits hat ein Byte?",
+      "answers": [
+        "8",
+        "acht"
+      ]
+    },
+    {
+      "question": "Welches Element hat das Symbol „Fe“?",
+      "answers": [
+        "Eisen"
+      ]
+    },
+    {
+      "question": "Wie heißt der größte Planet unseres Sonnensystems?",
+      "answers": [
+        "Jupiter"
+      ]
+    },
+    {
+      "question": "Wie viele Chromosomen hat ein Mensch normalerweise?",
+      "answers": [
+        "46"
+      ]
+    },
+    {
+      "question": "Was ist die Einheit der elektrischen Spannung?",
+      "answers": [
+        "Volt"
+      ]
+    },
+    {
+      "question": "Wer entwickelte das Periodensystem (maßgeblich, 1869)?",
+      "answers": [
+        "Mendelejew",
+        "Dmitri Mendelejew"
+      ]
+    },
+    {
+      "question": "Wie lange braucht das Licht von der Sonne zur Erde ungefähr (in Minuten)?",
+      "answers": [
+        "8",
+        "acht"
+      ]
+    },
+    {
+      "question": "Welches ist das härteste natürliche Material?",
+      "answers": [
+        "Diamant"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt des Mondes?",
+      "answers": [
+        "keine",
+        "es gibt keine"
+      ]
+    },
+    {
+      "question": "Welches Tier legt Eier, ist aber ein Säugetier?",
+      "answers": [
+        "Schnabeltier",
+        "Ameisenigel"
+      ]
+    },
+    {
+      "question": "Wie heißt die kleinste Einheit des Lebens?",
+      "answers": [
+        "Zelle"
+      ]
+    },
+    {
+      "question": "Was ist 7 × 8?",
+      "answers": [
+        "56"
+      ]
+    },
+    {
+      "question": "Wie viel ist die Quadratwurzel aus 144?",
+      "answers": [
+        "12",
+        "zwölf"
+      ]
+    },
+    {
+      "question": "Welche Programmiersprache läuft nativ im Webbrowser?",
+      "answers": [
+        "JavaScript",
+        "JS"
+      ]
+    },
+    {
+      "question": "Wie heißt die Kraft, die uns auf der Erde hält?",
+      "answers": [
+        "Schwerkraft",
+        "Gravitation"
+      ]
+    },
+    {
+      "question": "Bei wie viel Grad Celsius gefriert Wasser?",
+      "answers": [
+        "0",
+        "null"
+      ]
+    }
+  ]
+}

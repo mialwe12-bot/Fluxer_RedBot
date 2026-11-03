@@ -1,0 +1,174 @@
+{
+  "name": "Allgemeinwissen",
+  "description": "25 Fragen",
+  "author": "fluxer-redbot",
+  "questions": [
+    {
+      "question": "Wie viele Bundesländer hat Deutschland?",
+      "answers": [
+        "16",
+        "sechzehn"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Österreich?",
+      "answers": [
+        "Wien"
+      ]
+    },
+    {
+      "question": "Wer schrieb „Faust“?",
+      "answers": [
+        "Goethe",
+        "Johann Wolfgang von Goethe"
+      ]
+    },
+    {
+      "question": "Wie viele Tage hat ein Schaltjahr?",
+      "answers": [
+        "366"
+      ]
+    },
+    {
+      "question": "Welches Tier ist das größte lebende Säugetier?",
+      "answers": [
+        "Blauwal"
+      ]
+    },
+    {
+      "question": "In welchem Jahr fiel die Berliner Mauer?",
+      "answers": [
+        "1989"
+      ]
+    },
+    {
+      "question": "Wie viele Spieler stehen bei einer Fußballmannschaft auf dem Platz?",
+      "answers": [
+        "11",
+        "elf"
+      ]
+    },
+    {
+      "question": "Welche Farbe entsteht aus Blau und Gelb?",
+      "answers": [
+        "Grün",
+        "Gruen"
+      ]
+    },
+    {
+      "question": "Wer malte die „Mona Lisa“?",
+      "answers": [
+        "Leonardo da Vinci",
+        "da Vinci",
+        "Leonardo"
+      ]
+    },
+    {
+      "question": "Wie heißt der längste Fluss Deutschlands?",
+      "answers": [
+        "Rhein"
+      ]
+    },
+    {
+      "question": "Wie viele Minuten hat eine Stunde?",
+      "answers": [
+        "60",
+        "sechzig"
+      ]
+    },
+    {
+      "question": "Welches Instrument hat 88 Tasten?",
+      "answers": [
+        "Klavier",
+        "Piano",
+        "Flügel"
+      ]
+    },
+    {
+      "question": "Wer komponierte die „Ode an die Freude“ (9. Sinfonie)?",
+      "answers": [
+        "Beethoven",
+        "Ludwig van Beethoven"
+      ]
+    },
+    {
+      "question": "Wie viele Kontinente gibt es (übliche Zählung)?",
+      "answers": [
+        "7",
+        "sieben"
+      ]
+    },
+    {
+      "question": "Welche Währung hat Japan?",
+      "answers": [
+        "Yen"
+      ]
+    },
+    {
+      "question": "Wie heißt das Parlament der Bundesrepublik Deutschland?",
+      "answers": [
+        "Bundestag"
+      ]
+    },
+    {
+      "question": "Wie viele Seiten hat ein Würfel?",
+      "answers": [
+        "6",
+        "sechs"
+      ]
+    },
+    {
+      "question": "Welcher Planet ist der Sonne am nächsten?",
+      "answers": [
+        "Merkur"
+      ]
+    },
+    {
+      "question": "In welcher Stadt steht der Kölner Dom?",
+      "answers": [
+        "Köln",
+        "Koeln"
+      ]
+    },
+    {
+      "question": "Wie nennt man ein Wort, das vorwärts und rückwärts gleich gelesen wird?",
+      "answers": [
+        "Palindrom"
+      ]
+    },
+    {
+      "question": "Wie viele Ecken hat ein Sechseck?",
+      "answers": [
+        "6",
+        "sechs"
+      ]
+    },
+    {
+      "question": "Welches chemische Element hat das Symbol „O“?",
+      "answers": [
+        "Sauerstoff"
+      ]
+    },
+    {
+      "question": "Wer war der erste Bundeskanzler der Bundesrepublik Deutschland?",
+      "answers": [
+        "Konrad Adenauer",
+        "Adenauer"
+      ]
+    },
+    {
+      "question": "Aus wie vielen Karten besteht ein Skatblatt?",
+      "answers": [
+        "32",
+        "zweiunddreißig"
+      ]
+    },
+    {
+      "question": "Welches Märchen handelt von einem Mädchen mit roter Kappe?",
+      "answers": [
+        "Rotkäppchen",
+        "Rotkaeppchen"
+      ]
+    }
+  ]
+}

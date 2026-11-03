@@ -1,0 +1,8 @@
+{
+  "name": "levelup",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Erfahrungspunkte für Nachrichten und Zeit im Sprachkanal, Levels mit Glückwunsch, Level-Rollen und Rangliste.",
+  "displayName": "Levels",
+  "endUserData": "Speichert pro Mitglied XP, Anzahl gezählter Nachrichten und Sprachzeit (keine Inhalte)."
+}

@@ -1,0 +1,21 @@
+{
+  "when": "Wann",
+  "host": "Veranstaltet von",
+  "going": "dabei",
+  "maybe": "vielleicht",
+  "footer": "Event #{id} · ✅ dabei · ❔ vielleicht",
+  "cancelledTag": "(abgesagt)",
+  "endedTag": "(vorbei)",
+  "full": "Das Event „{title}“ ist leider voll.",
+  "reminder": "⏰ **{title}** beginnt {time}! {users}",
+  "notFound": "Event #{id} gibt es nicht.",
+  "notHost": "Das darf nur, wer das Event angelegt hat, oder ein Mod.",
+  "modsOnly": "Events dürfen hier nur Mods anlegen.",
+  "usage": "Verwendung: `event create <wann> | <Titel> [| Beschreibung]`, z. B. `event create Samstag 20:00 | Spieleabend`.",
+  "badTime": "Zeitangabe nicht verstanden. Beispiele: `morgen 20:00`, `Samstag 19:30`, `24.12. 18:00`, `in 2h`.",
+  "inPast": "Dieser Zeitpunkt liegt in der Vergangenheit.",
+  "created": "Event #{id} in {channel} angelegt.",
+  "none": "Keine kommenden Events.",
+  "listTitle": "📅 Kommende Events",
+  "cancelled": "❌ **{title}** wurde abgesagt. {users}"
+}

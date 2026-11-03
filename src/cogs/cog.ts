@@ -21,6 +21,15 @@ export const BOT_EVENTS = new Set([
 type Listener = (...args: any[]) => unknown;
 
 /**
+ * Gateway-Events heißen GROSS_MIT_UNTERSTRICH (MESSAGE_CREATE …) und kommen von der Plattform,
+ * dazu die Plattform-Zustände connected/disconnected/gatewayError. Alles andere sind Bot-Events –
+ * die eingebauten (BOT_EVENTS) oder eigene, die Cogs mit cog.emit() senden (z. B. "levelUp").
+ */
+export function isPlatformEvent(event: string): boolean {
+  return /^[A-Z0-9_]+$/.test(event) || event === '*' || ['connected', 'disconnected', 'gatewayError'].includes(event);
+}
+
+/**
  * Laufzeitobjekt eines geladenen Cogs. Wird an `setup(cog)` übergeben.
  * Alles, was hier registriert wird, räumt der Loader beim Entladen automatisch ab.
  */
@@ -106,7 +115,7 @@ export class Cog {
    * Fehler im Handler werden geloggt und crashen den Bot nie.
    */
   on(event: string, fn: Listener): this {
-    const entry = { event, target: (BOT_EVENTS.has(event) ? 'bot' : 'platform') as 'bot' | 'platform', fn };
+    const entry = { event, target: (isPlatformEvent(event) ? 'platform' : 'bot') as 'bot' | 'platform', fn };
     this.listeners.push(entry);
     if (this.active) this.attachListener(entry);
     return this;
@@ -133,6 +142,12 @@ export class Cog {
     for (const entry of this.listeners) {
       if (entry.wrapped) (entry.target === 'bot' ? this.bot.events : this.bot.platform).off(entry.event, entry.wrapped);
     }
+  }
+
+  /** Eigenes Bot-Event senden, das andere Cogs mit cog.on(name) empfangen. */
+  emit(event: string, ...args: unknown[]): void {
+    if (isPlatformEvent(event)) throw new Error(`"${event}" ist ein Gateway-Eventname – bitte camelCase verwenden.`);
+    this.bot.events.emit(event, ...args);
   }
 
   /** Geplanter Task (cron/every/at), läuft in der Bot-Zeitzone. */

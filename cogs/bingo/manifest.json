@@ -1,0 +1,8 @@
+{
+  "name": "bingo",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Server-Bingo: Jedes Mitglied bekommt eine zufällige 5×5-Karte aus euren Feldern, markiert selbst, und der Bot erkennt BINGO.",
+  "displayName": "Bingo",
+  "endUserData": "Speichert die Bingo-Karte (Felder und Markierungen) pro Mitglied."
+}

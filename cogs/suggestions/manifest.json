@@ -1,0 +1,8 @@
+{
+  "name": "suggestions",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Vorschläge mit Abstimmung per 👍/👎, Annahme oder Ablehnung durch das Team und Benachrichtigung.",
+  "displayName": "Vorschläge",
+  "endUserData": "Speichert Vorschläge mit Text und Benutzer-ID der einreichenden Person."
+}

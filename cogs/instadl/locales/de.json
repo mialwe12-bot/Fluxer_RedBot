@@ -1,0 +1,13 @@
+{
+  "badLink": "Das ist kein Instagram-Link zu einem Post oder Reel.",
+  "busy": "Gerade laufen schon Downloads – bitte gleich noch mal versuchen.",
+  "noYtdlp": "yt-dlp ist nicht installiert (im Docker-Image enthalten; lokal: YTDLP_PATH setzen).",
+  "needLogin": "Instagram verlangt eine Anmeldung oder bremst gerade. Hinterlege eine Cookie-Datei (INSTAGRAM_COOKIES, siehe README).",
+  "private": "Dieser Post ist privat.",
+  "failed": "Download fehlgeschlagen – Instagram hat die Anfrage abgelehnt oder der Post existiert nicht.",
+  "noMedia": "In diesem Post wurden keine Medien gefunden.",
+  "tooBig": "Die Datei ist größer als das Upload-Limit von {limit} MB.",
+  "skipped": "⚠️ {count} Datei(en) übersprungen (größer als {limit} MB oder mehr als 10).",
+  "autoOn": "Instagram-Links in {channel} werden jetzt automatisch heruntergeladen.",
+  "autoOff": "Automatische Downloads in {channel} sind aus."
+}

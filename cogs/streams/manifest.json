@@ -1,0 +1,8 @@
+{
+  "name": "streams",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Benachrichtigungen für Twitch-Livestreams und neue YouTube-Videos (optional YouTube-Livestreams).",
+  "displayName": "Streams",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

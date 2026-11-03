@@ -1,0 +1,8 @@
+{
+  "name": "eventposter",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Events ankündigen: Anmeldung per Reaktion (✅ dabei, ❔ vielleicht), Teilnehmerlimit, Erinnerung vor dem Start.",
+  "displayName": "Events",
+  "endUserData": "Speichert Events mit Benutzer-IDs der Veranstaltenden und Teilnehmenden."
+}

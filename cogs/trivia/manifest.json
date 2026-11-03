@@ -1,0 +1,8 @@
+{
+  "name": "trivia",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Quiz-Runden im Kanal mit deutschen Fragenlisten, eigenen Listen, Punktestand, Bestenliste und optionaler Belohnung.",
+  "displayName": "Trivia",
+  "endUserData": "Speichert pro Mitglied Anzahl Spiele, Siege und Punkte."
+}

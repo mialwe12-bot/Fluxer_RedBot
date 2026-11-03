@@ -1,0 +1,31 @@
+{
+  "rankTitle": "Rang von {name}",
+  "rankPlace": "Platz {rank}",
+  "totalXp": "XP gesamt",
+  "messages": "Nachrichten",
+  "voice": "Sprachzeit",
+  "noXp": "Noch hat niemand XP gesammelt.",
+  "boardTitle": "🏆 Rangliste {server}",
+  "settingsTitle": "Level-Einstellungen",
+  "s": {
+    "enabled": "Aktiv",
+    "xp": "XP pro Nachricht / Pause",
+    "voice": "Sprach-XP",
+    "announce": "Ankündigung",
+    "message": "Glückwunschtext",
+    "roles": "Level-Rollen"
+  },
+  "modes": {
+    "here": "im selben Kanal",
+    "channel": "fester Kanal",
+    "dm": "per DM",
+    "off": "aus"
+  },
+  "needChannel": "Bitte einen Kanal angeben.",
+  "badIgnore": "Bitte #kanal oder @rolle angeben.",
+  "ignoreOn": "Gibt jetzt keine XP mehr.",
+  "ignoreOff": "Gibt wieder XP.",
+  "xpAdded": "XP von {user} angepasst – jetzt Level {level}.",
+  "resetUserConfirm": "XP von {user} wirklich zurücksetzen?",
+  "resetAllConfirm": "Wirklich **alle** XP dieses Servers zurücksetzen?"
+}

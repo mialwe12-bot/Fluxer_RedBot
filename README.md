@@ -10,7 +10,7 @@ Ein modularer Bot für die Chat-Plattform **Fluxer**, gebaut nach dem Vorbild vo
 - Befehle intern im Slash-Command-Format, damit sich native Slash-Commands später ergänzen lassen
 - Docker (multi-stage, non-root), Healthcheck, Watchdog, Auto-Reconnect, Zeitzone Europe/Berlin
 
-> **Stand:** Phase 1 (Kern) und Phase 2 (Server-Verwaltung und Moderation) sind fertig. Die übrigen Cogs folgen in Phase 3–5, siehe [Cog-Status](#cog-status).
+> **Stand:** Phase 1 (Kern), Phase 2 (Server-Verwaltung und Moderation) und Phase 3 (Community und Alltag) sind fertig. Phase 4 und 5 folgen, siehe [Cog-Status](#cog-status).
 
 ---
 
@@ -77,8 +77,10 @@ fluxer-redbot/
 │   ├── example/                # Beispiel: hello, echo, Gruppen, Config, Menüs, Task
 │   ├── permissions/            # Regeln verwalten
 │   ├── downloader/             # Git-Repos als Cog-Quellen
-│   └── modlog/ mod/ mutes/ warnings/ cleanup/ filter/ automod/ retrigger/
+│   ├── modlog/ mod/ mutes/ warnings/ cleanup/ filter/ automod/ retrigger/
 │       inviteblocklist/ reports/ roletools/ alias/ admin/ extendedmodlog/   # Phase 2
+│   └── economy/ levelup/ badges/ general/ customcom/ welcome/ suggestions/ tickets/
+│       trivia/ (inkl. lists/*.json) bingo/ conversions/ eventposter/ streams/ image/ instadl/   # Phase 3
 └── tests/                      # Vitest: Loader, Config-API, Rechte, Parser, Dispatcher, Phase-2-Cogs
 ```
 
@@ -163,6 +165,12 @@ Verbinden/Sprechen, Kanäle verwalten, Audit-Log). Im Chat liefert `!invite` den
 | `DATA_DIR` | `/data` | Datenverzeichnis |
 | `LOG_LEVEL` / `LOG_PRETTY` | `info` / `false` | Logging |
 | `WATCHDOG_SECONDS` | `600` | so lange ohne Gateway, dann Neustart des Prozesses |
+| `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET` | – | streams: Twitch-Livestreams ([dev.twitch.tv/console](https://dev.twitch.tv/console), kostenlos) |
+| `YOUTUBE_API_KEY` | – | streams: YouTube-**Livestreams** (neue Videos funktionieren ohne Key per RSS) |
+| `IMGUR_CLIENT_ID` / `GIPHY_API_KEY` | – | image: Imgur-Suche bzw. GIFs (Katzen/Hunde/Füchse ohne Key) |
+| `INSTAGRAM_COOKIES` | – | instadl: Pfad zu einer Cookie-Datei (Netscape-Format), falls Instagram eine Anmeldung verlangt |
+| `UPLOAD_LIMIT_MB` | `25` | instadl: max. Dateigröße für Uploads (**Annahme** zum Limit der Instanz) |
+| `YTDLP_PATH` | `yt-dlp` | Pfad zu yt-dlp (im Docker-Image enthalten) |
 
 **Gateway-URL:** Sie wird nicht geraten, sondern über `GET {API}/v1/gateway/bot` abgefragt und
 **unverändert** verwendet (keine Umschreibung von `ws` auf `wss`), wie es die Fluxer-Doku verlangt.
@@ -338,6 +346,8 @@ export default defineCog({
     cog.on('GUILD_MEMBER_ADD', (member) => { /* … */ });
     cog.on('VOICE_STATE_UPDATE', (state, previous) => { /* previous = alter Voice-State */ });
     cog.on('commandNotFound', (event) => { /* für alias/customcom */ });
+    cog.on('levelUp', (e) => { /* eigene Events anderer Cogs */ });
+    cog.emit('meinEvent', { guildId });       // eigenes Event senden (camelCase)
 
     // Zeitgesteuert (Europe/Berlin)
     cog.schedule({ name: 'täglich', cron: '0 9 * * *', run: async () => { /* … */ } });
@@ -549,6 +559,139 @@ Dauern: `30s`, `10m`, `2h`, `3d`, `1w`, kombinierbar wie `1h30m`.
 - **Hinweis:** Fluxer schickt beim Löschen nur die ID. Den Inhalt kennt der Bot nur aus seinem
   Nachrichten-Cache (die letzten 5000 Nachrichten seit dem Start).
 
+### economy
+
+Bank wie bei Red: pro Server, oder mit `bank setglobal an` (Owner) eine gemeinsame Bank für alle Server.
+
+- `balance [user]`, `transfer <user> <betrag>`, `payday` (Standard: 120 Taler alle 5 Minuten),
+  `slot <einsatz>` (Spielautomat), `leaderboard [anzahl]`.
+- `bank set <user> <500|+100|-50>`, `bank reset` (Admin).
+- `economyset paydayamount|paydaytime|slotmin|slotmax|slottime|registeramount|currency|bankname`.
+- Andere Cogs (trivia, bingo) zahlen Belohnungen über die Bank aus.
+
+### levelup
+
+- XP für Nachrichten: zufällig 15–25 XP, höchstens einmal pro 60 s. Befehle zählen nicht.
+- **Sprach-XP:** jede Minute 5 XP für alle, die mit mindestens einer weiteren Person im Sprachkanal sind und weder stumm
+  noch taub geschaltet sind. Der AFK-Kanal zählt nicht.
+- Level-Formel wie bei MEE6: Von Level *l* auf *l+1* braucht man 5·l² + 50·l + 100 XP.
+- `rank [user]`, `levels` (Rangliste).
+- `levelset` zeigt die Einstellungen, außerdem `enabled`, `xp <min> <max>`, `cooldown`, `voicexp an|aus`, `voicerate <xp>`,
+  `announce hier|kanal|dm|aus [#kanal]` und `message <text>` mit `{user}`, `{level}`, `{server}`.
+- `levelset ignore #kanal|@rolle`, `role add <level> <@rolle>` (`stackroles aus` = nur die höchste behalten),
+  `setlevel`, `addxp`, `reset`.
+
+### badges
+
+- `badgeset create <name> <emoji> <beschreibung>`, `delete`, `give <user> <abzeichen>`, `take`.
+- `badgeset autolevel <abzeichen> <level>` vergibt das Abzeichen automatisch beim Level-Aufstieg (braucht levelup).
+- `badges [user]` zeigt die Abzeichen eines Mitglieds. `profile [user]` zeigt Level, Rang, Guthaben, Beitrittsdatum und
+  Abzeichen.
+- **Annahme:** Ein 1:1-Vorbild gibt es nicht. Profile werden als Embed dargestellt, nicht als Bild.
+
+### general
+
+`8ball <frage?>`, `choose <a> <b> …`, `flip [user]`, `roll [max]`, `rps <stein|papier|schere>`, `lmgtfy <suche>`,
+`stopwatch`, `serverinfo`, `urban <begriff>` (Urban Dictionary, englisch).
+
+### customcom
+
+- `customcom create simple <name> <antwort>`.
+- `customcom create random <name> <a | b | c>`: Antworten mit `|` trennen. **Annahme:** Bei Red läuft das interaktiv.
+- `customcom edit|delete|cooldown <name> <sekunden> [user|channel|server]|list|show|search`.
+- Platzhalter: `{author}`, `{author.name}`, `{channel}`, `{channel.name}`, `{server}`, `{0}`…`{9}` (Argumente),
+  `{args}` (alle Argumente), `{uses}`.
+- Aliase (Cog `alias`) haben bei gleichem Namen Vorrang.
+
+### welcome
+
+- `welcomeset channel #kanal`, `welcomeset toggle an`, `welcomeset event join|leave|ban an|aus`.
+- `welcomeset add|remove|list <art> …`: mehrere Texte möglich, der Bot wählt zufällig.
+  Platzhalter: `{member}`, `{member.name}`, `{server}`, `{count}`.
+- `welcomeset dm <text|aus>` (zusätzliche DM), `welcomeset embed an`, `welcomeset test join`.
+
+### suggestions
+
+- `suggest <text>`: Ein Embed mit Nummer erscheint im Vorschlagskanal, abgestimmt wird mit 👍/👎.
+- `suggestion approve|deny <nr> [begründung]` (Mod): Das Embed wird aktualisiert (mit Stimmenzahl), optional in einen
+  eigenen Kanal kopiert, und die einreichende Person bekommt eine DM.
+- `suggestset channel|approvedchannel|deniedchannel|toggle|anonymous|dm|emojis`.
+
+### tickets
+
+- `ticketset panel #kanal [text]` postet ein Panel. Reaktion mit 🎫 öffnet ein Ticket, alternativ `ticket new [grund]`.
+- Jedes Ticket ist ein privater Kanal `ticket-0001`, sichtbar nur für die öffnende Person, die Support-Rollen
+  (`ticketset supportrole @rolle`) und den Bot.
+- `ticket add|remove <user>`, `ticket close [grund]`: Das Protokoll geht als `.txt` in den Log-Kanal
+  (`ticketset log #kanal`), danach wird der Kanal gelöscht.
+- `ticketset category|max|message|toggle`, `ticket list`.
+
+### trivia
+
+- `trivia <liste> [weitere …]` startet ein Quiz. Antworten schreibt man einfach in den Kanal.
+- Mitgeliefert: `allgemeinwissen`, `geografie`, `wissenschaft` (je 25 Fragen, deutsch).
+- Die Antwortprüfung ignoriert Groß/Klein, Satzzeichen und Umlaut-Schreibweisen (ü = ue). Längere Antworten zählen
+  auch im Satz („Ich glaube Goethe“).
+- Standard: Sieg bei 10 Punkten, 20 s pro Frage, Abbruch nach 3 unbeantworteten Fragen.
+- `trivia stop`, `trivia list`, `trivia leaderboard [siege|punkte|spiele]`.
+- `triviaset maxscore|timeout|delay|payout|stopafter|reveal`.
+- Belohnung wie bei Red: Punkte × payout an den eindeutigen Sieger, bei mindestens 3 Teilnehmenden.
+- Eigene Listen: `triviaset upload <name>` mit einer JSON-Datei als Anhang (Owner).
+  Format: `{"name": "…", "questions": [{"question": "…", "answers": ["…", "…"]}]}`.
+
+### bingo
+
+- `bingoset tiles Ereignis 1; Ereignis 2; …` (mindestens 24 Felder), `bingoset add|remove|free|name|reward`.
+- `bingo` zeigt deine zufällige 5×5-Karte; die Mitte ist frei.
+- `bingo mark <B3 | 13 | Textteil>` / `bingo unmark …`. Eine volle Reihe, Spalte oder Diagonale ergibt **BINGO** (mit
+  optionaler Belohnung).
+- `bingo winners`, `bingo new` (Mod) startet eine neue Runde.
+- **Annahme:** angelehnt an TrustyJAIDs Bingo. Die Karte erscheint als Emoji-Raster mit Legende statt als Bild.
+
+### conversions
+
+- `convert <menge> <von> [in] <nach>` für Einheiten: Länge, Gewicht, Volumen, Fläche, Geschwindigkeit, Daten, Zeit,
+  Temperatur.
+- Währungen über EZB-Referenzkurse (frankfurter.app, ohne Key, 1 h zwischengespeichert). Krypto über CoinGecko (ohne Key).
+- `crypto <coin> [währung]`, `units`.
+- **Abweichung:** Aktienkurse sind nicht enthalten, weil es keine stabile kostenlose Quelle gibt.
+
+### eventposter
+
+- `event create <wann> | <Titel> [| Beschreibung]`.
+  Zeitangaben: `morgen 20:00`, `Samstag 19:30`, `24.12. 18:00`, `2026-12-24 18:00`, `in 2h`, `20:00`.
+- Anmeldung per Reaktion: ✅ dabei, ❔ vielleicht. Optionales Teilnehmerlimit; wer zu viel ist, bekommt eine DM.
+- Erinnerung an alle Angemeldeten X Minuten vor dem Start (Standard 15). Nach 6 h gilt das Event als vorbei.
+- `event list|cancel <id>|edit <id> <wann> | <titel> | …`.
+- `eventset channel|pingrole|max|reminder|creators alle|mods`.
+
+### streams
+
+- `streamalert twitch <name> [#kanal]`: Livestream-Meldung mit Titel, Spiel, Zuschauern und Vorschaubild.
+  Geprüft wird alle 2 min. Braucht `TWITCH_CLIENT_ID/SECRET`.
+- `streamalert youtube <UC…-ID | @handle | URL> [#kanal]`: **neue Videos** über den RSS-Feed, ohne Key, alle 5 min.
+  Mit `YOUTUBE_API_KEY` meldet der Bot auch **YouTube-Livestreams**; dann wird alle 15 min geprüft, weil jede Abfrage
+  100 Einheiten des Tageskontingents kostet.
+- `streamalert remove|list`, `streamset mention @rolle|everyone|aus`, `streamset message|videomessage <text>`
+  (`{name}`, `{title}`, `{url}`, `{game}`), `streamset check`.
+- **Annahme:** @Handles werden über die Kanalseite aufgelöst. Funktioniert das nicht, die UC-ID verwenden.
+
+### image
+
+`imgur <suche>` (Imgur, NSFW nur in NSFW-Kanälen), `gif <suche>` (GIPHY), `cat`, `dog`, `fox` (ohne Key).
+**Abweichung:** Reds Image-Cog hat keine Tierbilder, dafür Subreddit-Suche, die hier fehlt.
+
+### instadl
+
+- `insta <link>` lädt einen Post, ein Reel oder ein Karussell (bis 10 Dateien) herunter und postet die Medien im Kanal.
+- `instaset auto [#kanal]`: Instagram-Links in diesem Kanal werden automatisch heruntergeladen.
+  `instaset deleteoriginal an` löscht danach die Ursprungsnachricht.
+- Technik: [yt-dlp](https://github.com/yt-dlp/yt-dlp) (im Docker-Image enthalten, beim Neubauen immer die neueste Version).
+- **Wichtig:** Instagram blockiert anonyme Downloads häufig. Dann eine Cookie-Datei eines (Zweit-)Kontos exportieren
+  (Netscape-Format, z. B. per Browser-Erweiterung „Get cookies.txt“) und so einbinden: Datei nach `./secrets/`,
+  im compose `./secrets:/secrets:ro` aktivieren, dann `INSTAGRAM_COOKIES=/secrets/instagram-cookies.txt`.
+- Dateien über `UPLOAD_LIMIT_MB` werden übersprungen. Höchstens 2 Downloads laufen gleichzeitig.
+
 ## Cog-Status
 
 Legende: ✅ fertig · ⏳ geplant · ⚠️ geplant, aber von Fluxer-Fähigkeiten abhängig (ggf. Stub)
@@ -573,21 +716,21 @@ Legende: ✅ fertig · ⏳ geplant · ⚠️ geplant, aber von Fluxer-Fähigkeit
 | cleanup | 2 | ✅ |  |
 | reports | 2 | ✅ |  |
 | roletools | 2 | ✅ | Reaktionsrollen statt Buttons |
-| general | 3 | ⏳ | |
-| customcom | 3 | ⏳ | |
-| welcome | 3 | ⏳ | |
-| suggestions | 3 | ⏳ | |
-| tickets | 3 | ⏳ | Reaktion statt Button zum Öffnen |
-| levelup | 3 | ⏳ | |
-| badges | 3 | ⏳ | |
-| economy | 3 | ⏳ | |
-| trivia | 3 | ⏳ | |
-| bingo | 3 | ⏳ | |
-| conversions | 3 | ⏳ | |
-| eventposter | 3 | ⏳ | |
-| streams | 3 | ⏳ | Twitch/YouTube-API-Keys nötig |
-| image | 3 | ⏳ | |
-| instadl | 3 | ⏳ | Instagram ändert häufig die API |
+| general | 3 | ✅ | 8ball, roll, flip, rps, serverinfo, urban … |
+| customcom | 3 | ✅ | Platzhalter, zufällige Antworten |
+| welcome | 3 | ✅ | join/leave/ban, DM |
+| suggestions | 3 | ✅ | 👍/👎, annehmen/ablehnen |
+| tickets | 3 | ✅ | Reaktion statt Button zum Öffnen, Protokoll |
+| levelup | 3 | ✅ | Nachrichten- und Sprach-XP, Level-Rollen |
+| badges | 3 | ✅ | manuell oder ab Level, Profil |
+| economy | 3 | ✅ | Bank, Zahltag, Automat |
+| trivia | 3 | ✅ | 3 deutsche Listen, eigene Listen |
+| bingo | 3 | ✅ | 5×5-Karten |
+| conversions | 3 | ✅ | Einheiten, EZB-Kurse, Krypto |
+| eventposter | 3 | ✅ | Anmeldung per Reaktion, Erinnerung |
+| streams | 3 | ✅ | Twitch (Key), YouTube-Videos ohne Key |
+| image | 3 | ✅ | Imgur/GIPHY (Key), Tiere ohne Key |
+| instadl | 3 | ✅ | per yt-dlp, ggf. Cookies nötig |
 | afkchannel | 4 | ⏳ | Voice-State-Events ✅, Verschieben angenommen ✅ |
 | untis | 4 | ⏳ | AES-256-GCM, Zugangsdaten nur per DM |
 | animewatch | 4 | ⏳ | AniList (ohne Key) + TMDB (Key) |
@@ -629,6 +772,9 @@ als *Annahme* markiert.
 | Rollen/Overwrites | Discord-kompatible Routen (`/guilds/{id}/roles`, `/channels/{id}/permissions/{id}`) | – |
 | Einladungslinks | **Annahme:** `fluxer.gg/<code>` und `<instanz>/invite/<code>` | inviteblocklist |
 | Nachrichtenlinks | **Annahme:** `<instanz>/channels/<server>/<kanal>/<nachricht>` | Reaktionsrollen, cleanup |
+| Kanäle anlegen/löschen | `POST /guilds/{id}/channels` mit `permission_overwrites`, `DELETE /channels/{id}` | tickets |
+| Datei-Uploads | Multipart wie bei Discord (`files[n]` + `payload_json`, über @fluxerjs/rest); **Annahme:** Limit 25 MB | tickets (Protokoll), instadl |
+| Reaktionszahlen | `GET /channels/{id}/messages/{id}` liefert `reactions[].count` (**Annahme**) | suggestions (Stimmen) |
 | Einladungslink | **Annahme:** `{BASE_URL}/oauth2/authorize?client_id=…&scope=bot&permissions=…` | `!invite`, Start-Log |
 | Rate-Limits | 429 + `retry_after` | `@fluxerjs/rest` wartet und wiederholt automatisch (Buckets pro Route, 3 Retries) |
 | Reconnect | RESUME mit Session-ID/Sequenz, sonst neues IDENTIFY | `@fluxerjs/ws`; getestet. Dazu Watchdog (Neustart nach `WATCHDOG_SECONDS`) |
@@ -660,6 +806,10 @@ Die Tests (`tests/`) decken ab:
 - **Phase 2:** alle 14 Cogs laden konfliktfrei, Kick/Ban/Tempban/Timeout inkl. Fälle und Hierarchie, Mutes (Timeout/Rolle/Kanal, Ablauf),
   Verwarnungs-Eskalation, Filter, Automod, Einladungssperre, Cleanup (Bulk-Delete), ReTrigger, Alias, Meldungen mit ✅,
   Reaktions- und Auto-Rollen, addrole, Lösch-Log mit Cache-Inhalt, Hilfe mit allen Cogs
+- **Phase 3:** Level-Formel, Automat, Platzhalter, Trivia-Antwortprüfung und Fragenlisten, Bingo-Logik, Einheiten,
+  deutsche Zeitangaben, YouTube-RSS, Instagram-Links, Ticket-Protokoll; Ende-zu-Ende: Zahltag/Überweisung,
+  eigene Befehle mit Alias-Vorrang, Begrüßung, Vorschlag annehmen, Ticket öffnen/schließen mit Upload, XP → Level →
+  Auto-Abzeichen, komplette Trivia-Runde, Bingo, Event-Anmeldung per Reaktion, Instagram-Download (mit Fake-yt-dlp)
 
 ---
 

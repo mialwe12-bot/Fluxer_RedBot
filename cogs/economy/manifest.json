@@ -1,0 +1,8 @@
+{
+  "name": "economy",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Bank und Wirtschaft wie bei Red: Kontostand, Überweisungen, Zahltag, Spielautomat, Bestenliste – pro Server oder global.",
+  "displayName": "Wirtschaft",
+  "endUserData": "Speichert Kontostände und den Zeitpunkt des letzten Zahltags pro Benutzer."
+}

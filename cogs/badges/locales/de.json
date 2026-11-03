@@ -1,0 +1,19 @@
+{
+  "autoAwarded": "🏅 Neues Abzeichen auf **{server}**: {badge}",
+  "notFound": "Das Abzeichen `{badge}` gibt es nicht.",
+  "noBadges": "{user} hat noch keine Abzeichen.",
+  "userTitle": "Abzeichen von {name}",
+  "level": "Level",
+  "place": "Platz {rank}",
+  "balance": "Guthaben",
+  "joined": "Dabei seit",
+  "badgesField": "Abzeichen ({count})",
+  "allTitle": "Abzeichen dieses Servers",
+  "fromLevel": "automatisch ab Level {level}",
+  "none": "Noch keine Abzeichen angelegt.",
+  "exists": "Ein Abzeichen mit diesem Namen gibt es schon.",
+  "given": "{badge} an {user} vergeben.",
+  "alreadyHas": "Dieses Abzeichen ist schon vergeben.",
+  "needLevelup": "Gespeichert – damit es automatisch vergeben wird, muss der Cog `levelup` geladen sein.",
+  "autoSet": "Gespeichert."
+}

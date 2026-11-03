@@ -1,0 +1,8 @@
+{
+  "name": "badges",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Abzeichen pro Server (Emoji + Beschreibung), manuell oder automatisch ab einem Level vergeben, und ein Profil mit Level, Guthaben und Abzeichen.",
+  "displayName": "Abzeichen",
+  "endUserData": "Speichert, welche Abzeichen ein Mitglied besitzt."
+}

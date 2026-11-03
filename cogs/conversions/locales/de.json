@@ -1,0 +1,19 @@
+{
+  "ecbNote": "(EZB-Referenzkurs)",
+  "geckoNote": "(CoinGecko)",
+  "unknown": "Das kann ich nicht umrechnen. Beispiele: `convert 5 km mi`, `convert 100 °F °C`, `convert 20 EUR USD`, `convert 1 BTC EUR` – alle Einheiten: `units`.",
+  "noCoin": "Diese Kryptowährung oder Zielwährung kenne ich nicht.",
+  "unitsTitle": "Unterstützte Einheiten",
+  "currencyHint": "dreistellige Codes wie EUR, USD, CHF, GBP (EZB) und Krypto-Kürzel wie BTC, ETH",
+  "cat": {
+    "length": "Länge",
+    "mass": "Gewicht",
+    "volume": "Volumen",
+    "speed": "Geschwindigkeit",
+    "data": "Daten",
+    "time": "Zeit",
+    "area": "Fläche",
+    "temp": "Temperatur",
+    "currency": "Währungen"
+  }
+}

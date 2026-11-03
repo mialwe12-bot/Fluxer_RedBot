@@ -1,0 +1,22 @@
+{
+  "disabled": "Tickets sind auf diesem Server deaktiviert.",
+  "tooMany": "Du hast schon ein offenes Ticket: {channel}",
+  "topic": "Ticket von {user} – {reason}",
+  "transcriptHeader": "Ticket #{number} – erstellt von {owner} am {opened}, geschlossen am {closed}",
+  "closedTitle": "🎫 Ticket #{number} geschlossen",
+  "owner": "Erstellt von",
+  "closedBy": "Geschlossen von",
+  "reason": "Anliegen",
+  "closeReason": "Grund für das Schließen",
+  "notATicket": "Das hier ist kein Ticket-Kanal.",
+  "notAllowed": "Das dürfen nur die Person, die das Ticket geöffnet hat, und das Team.",
+  "opened": "🎫 Dein Ticket: {channel}",
+  "closing": "🔒 Ticket wird geschlossen …",
+  "added": "{user} wurde zum Ticket hinzugefügt.",
+  "cantRemoveOwner": "Die Person, die das Ticket geöffnet hat, kann nicht entfernt werden.",
+  "noneOpen": "Keine offenen Tickets.",
+  "panelTitle": "🎫 Support",
+  "panelText": "Reagiere mit {emoji}, um ein Ticket zu öffnen. Das Team meldet sich dann bei dir.",
+  "roleAdded": "Support-Rolle hinzugefügt.",
+  "roleRemoved": "Support-Rolle entfernt."
+}

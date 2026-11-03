@@ -1,0 +1,11 @@
+{
+  "noImgurKey": "Für die Imgur-Suche fehlt IMGUR_CLIENT_ID in der .env (kostenlos unter api.imgur.com/oauth2/addclient).",
+  "noGiphyKey": "Für GIFs fehlt GIPHY_API_KEY in der .env (kostenlos unter developers.giphy.com).",
+  "apiDown": "{api} ist gerade nicht erreichbar.",
+  "nothing": "Nichts gefunden.",
+  "animals": {
+    "cat": "🐱 Miau!",
+    "dog": "🐶 Wuff!",
+    "fox": "🦊 Fuchs!"
+  }
+}

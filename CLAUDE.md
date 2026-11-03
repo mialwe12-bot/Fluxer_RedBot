@@ -27,7 +27,7 @@ Modularer Fluxer-Bot nach Red-DiscordBot-Vorbild. Alle Bot-Texte, das README und
 ## Phasen
 1. Kern + example/permissions/downloader ✅
 2. admin, alias, mod, modlog, extendedmodlog, mutes, warnings, automod, filter, retrigger, inviteblocklist, cleanup, reports, roletools ✅
-3. general, customcom, welcome, suggestions, tickets, levelup, badges, economy, trivia, bingo, conversions, eventposter, streams, image, instadl
+3. general, customcom, welcome, suggestions, tickets, levelup, badges, economy, trivia, bingo, conversions, eventposter, streams, image, instadl ✅
 4. afkchannel, untis, animewatch, dailystats, birthday, gameblacklist, jellyfinmusic
 5. audio, Downloader-Erweiterungen
 
@@ -38,6 +38,13 @@ Nach jeder Phase fragt Claude, ob es weitergeht.
 - Moderations-Cogs legen Fälle über `modlog` an; Immunität über `bot.isImmune()`, Hierarchie über `bot.hierarchyProblem()`
 - Optionale Zahl/Dauer vor freiem Text: Option `rest` + `takeInteger`/`takeDuration` aus dem SDK
 - Tests der Cogs: `tests/phase2.test.ts` (FakeRest, `platform.handleDispatch`)
+
+## Konventionen (Phase 3)
+- Eigene Bot-Events: `cog.emit('camelCase', …)`, Empfang mit `cog.on('camelCase')`; GROSS_SCHREIBUNG = Gateway
+- Externe APIs über `fetchJson`/`fetchText`/`fetchBuffer` aus dem SDK (Timeout, User-Agent), `cog.signal` übergeben
+- APIs: economy (`EconomyApi`), levelup (`LevelupApi`, Event `levelUp`), mutes, warnings, modlog
+- Config-`get<T>()` hat nur noch die generische Überladung (vorher lieferte `get<string>` fälschlich `unknown`)
+- yt-dlp liegt im Docker-Image (`/usr/local/bin/yt-dlp`), wird von instadl und später audio/jellyfinmusic genutzt
 
 ## Befehle
 - `npm test`, `npm run typecheck`, `npm run build`

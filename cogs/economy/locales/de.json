@@ -1,0 +1,42 @@
+{
+  "balance": "💰 {user} hat **{amount}** auf der {bank} (Platz {rank}).",
+  "insufficient": "Nicht genug Guthaben – du hast {balance}.",
+  "selfTransfer": "Du kannst dir nicht selbst Geld überweisen.",
+  "botTransfer": "Bots brauchen kein Geld. 🤖",
+  "transferred": "💸 {amount} an {user} überwiesen.",
+  "paydayWait": "Dein nächster Zahltag ist in {time}.",
+  "payday": "💵 Zahltag! Du bekommst **{amount}**. Neuer Kontostand: {balance}.",
+  "slotRange": "Der Einsatz muss zwischen {min} und {max} liegen.",
+  "slotWait": "Der Automat kühlt noch ab – warte {time}.",
+  "slotWin": "Gewinn: **{amount}**!",
+  "slotLose": "Verloren: {amount}.",
+  "newBalance": "Kontostand: {balance}",
+  "slots": {
+    "jackpot": "🎉 JACKPOT!",
+    "diamonds": "💎 Drei Diamanten!",
+    "clover": "🍀 Dreifaches Glück!",
+    "three": "Drei gleiche!",
+    "cherries": "Zwei Kirschen!",
+    "two": "Zwei gleiche.",
+    "lose": "Nichts."
+  },
+  "emptyBoard": "Noch niemand hat Geld.",
+  "boardTitle": "🏦 Bestenliste der {bank}",
+  "badAmount": "Ungültiger Betrag – z. B. 500, +100 oder -50.",
+  "setDone": "Kontostand von {user}: {amount}.",
+  "globalOwnerOnly": "Die globale Bank kann nur der Bot-Owner zurücksetzen.",
+  "resetConfirm": "Wirklich **alle** Konten zurücksetzen?",
+  "resetDone": "Alle Konten wurden zurückgesetzt.",
+  "nowGlobal": "Ab jetzt gibt es eine gemeinsame Bank für alle Server.",
+  "nowLocal": "Ab jetzt hat jeder Server seine eigene Bank.",
+  "settingsTitle": "Wirtschaft ({scope})",
+  "scopeGlobal": "global",
+  "scopeServer": "dieser Server",
+  "settings": {
+    "bankName": "Bank",
+    "currency": "Währung",
+    "defaultBalance": "Startguthaben",
+    "payday": "Zahltag",
+    "slot": "Automat (Einsatz / Pause)"
+  }
+}

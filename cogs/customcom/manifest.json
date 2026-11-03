@@ -1,0 +1,8 @@
+{
+  "name": "customcom",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Eigene Befehle mit festen oder zufälligen Antworten, Platzhaltern und Cooldowns – wie Reds CustomCommands.",
+  "displayName": "Eigene Befehle",
+  "endUserData": "Speichert, wer einen eigenen Befehl angelegt hat (Benutzer-ID)."
+}

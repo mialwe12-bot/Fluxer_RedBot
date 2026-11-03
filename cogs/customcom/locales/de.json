@@ -1,0 +1,22 @@
+{
+  "badName": "Namen dürfen nur Buchstaben, Zahlen, - und _ enthalten (max. 32 Zeichen).",
+  "isBuiltin": "`{name}` ist bereits ein Bot-Befehl.",
+  "exists": "`{name}` gibt es schon – ändern mit `customcom edit`.",
+  "notFound": "Den eigenen Befehl `{name}` gibt es nicht.",
+  "randomNeedsTwo": "Ein zufälliger Befehl braucht mindestens zwei Antworten, getrennt mit |.",
+  "created": "Eigener Befehl `{name}` angelegt.",
+  "deleted": "`{name}` gelöscht.",
+  "none": "Es gibt noch keine eigenen Befehle.",
+  "listTitle": "Eigene Befehle",
+  "noHits": "Nichts gefunden.",
+  "types": {
+    "simple": "feste Antwort",
+    "random": "zufällige Antwort"
+  },
+  "fields": {
+    "type": "Typ",
+    "cooldown": "Cooldown",
+    "uses": "Benutzt",
+    "author": "Angelegt von"
+  }
+}

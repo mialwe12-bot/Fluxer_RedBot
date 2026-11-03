@@ -1,0 +1,12 @@
+{
+  "twitchNoKey": "Für Twitch fehlen TWITCH_CLIENT_ID und TWITCH_CLIENT_SECRET in der .env (kostenlos unter dev.twitch.tv/console).",
+  "twitchNotFound": "Diesen Twitch-Kanal gibt es nicht.",
+  "ytNotFound": "YouTube-Kanal nicht gefunden – gib am besten die Kanal-ID (beginnt mit UC…) an.",
+  "added": "✅ {platform}-Kanal **{name}** wird beobachtet.",
+  "notFound": "Diese Beobachtung gibt es nicht.",
+  "listTitle": "Beobachtete Kanäle",
+  "none": "Noch keine – `streamalert twitch <name>` oder `streamalert youtube <kanal-id>`.",
+  "badMention": "Bitte @rolle, everyone oder aus angeben.",
+  "game": "Spiel",
+  "viewers": "Zuschauer"
+}

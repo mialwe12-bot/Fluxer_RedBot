@@ -1,0 +1,8 @@
+{
+  "name": "instadl",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Lädt Instagram-Posts, Reels und Karussells herunter und postet die Medien direkt im Kanal – per Befehl oder automatisch bei Links.",
+  "displayName": "Instagram-Downloader",
+  "endUserData": "Speichert keine Nutzerdaten. Medien werden nur kurz zwischengespeichert und nach dem Hochladen gelöscht."
+}

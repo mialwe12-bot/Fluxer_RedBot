@@ -1,0 +1,8 @@
+{
+  "name": "tickets",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Support-Tickets als private Kanäle – per Befehl oder Reaktion 🎫 auf einem Panel – mit Protokoll beim Schließen.",
+  "displayName": "Tickets",
+  "endUserData": "Speichert offene Tickets (Benutzer-ID, Grund). Beim Schließen wird ein Protokoll des Ticket-Kanals in den Log-Kanal hochgeladen."
+}

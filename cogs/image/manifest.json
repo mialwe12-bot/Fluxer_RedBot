@@ -1,0 +1,8 @@
+{
+  "name": "image",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Bilder und GIFs: Imgur-Suche, GIPHY-GIFs (jeweils mit API-Key) sowie zufällige Katzen, Hunde und Füchse (ohne Key).",
+  "displayName": "Bilder",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

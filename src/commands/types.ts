@@ -30,13 +30,13 @@ export interface CommandOption {
   description: string;
   type: OptionType;
   required?: boolean;
-  choices?: OptionChoice[];
+  choices?: readonly OptionChoice[];
   min_value?: number;
   max_value?: number;
   min_length?: number;
   max_length?: number;
   /** Erlaubte Kanaltypen (ChannelType-Werte). */
-  channel_types?: number[];
+  channel_types?: readonly number[];
   /** Prefix-Erweiterung: Argument nimmt den gesamten Rest der Eingabe auf. */
   rest?: boolean;
   /** Prefix-Erweiterung: mehrere Werte (Leerzeichen-getrennt) bis zum Ende – Ergebnis ist ein Array. */

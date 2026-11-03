@@ -1,0 +1,163 @@
+{
+  "name": "Geografie",
+  "description": "25 Fragen",
+  "author": "fluxer-redbot",
+  "questions": [
+    {
+      "question": "Wie heißt die Hauptstadt von Frankreich?",
+      "answers": [
+        "Paris"
+      ]
+    },
+    {
+      "question": "Wie heißt der höchste Berg der Erde?",
+      "answers": [
+        "Mount Everest",
+        "Everest"
+      ]
+    },
+    {
+      "question": "Wie heißt der höchste Berg Deutschlands?",
+      "answers": [
+        "Zugspitze"
+      ]
+    },
+    {
+      "question": "Welcher ist der größte Ozean?",
+      "answers": [
+        "Pazifik",
+        "Pazifischer Ozean",
+        "Stiller Ozean"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Italien?",
+      "answers": [
+        "Rom"
+      ]
+    },
+    {
+      "question": "In welchem Land liegt Machu Picchu?",
+      "answers": [
+        "Peru"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Kanada?",
+      "answers": [
+        "Ottawa"
+      ]
+    },
+    {
+      "question": "Welches ist das flächenmäßig größte Land der Erde?",
+      "answers": [
+        "Russland"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Australien?",
+      "answers": [
+        "Canberra"
+      ]
+    },
+    {
+      "question": "Durch welche Stadt fließt die Elbe: Hamburg oder Frankfurt?",
+      "answers": [
+        "Hamburg"
+      ]
+    },
+    {
+      "question": "Wie heißt die größte Wüste Afrikas?",
+      "answers": [
+        "Sahara"
+      ]
+    },
+    {
+      "question": "Welches Land hat die meisten Einwohner (Stand 2024)?",
+      "answers": [
+        "Indien"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Spanien?",
+      "answers": [
+        "Madrid"
+      ]
+    },
+    {
+      "question": "An welchem Meer liegt Kiel?",
+      "answers": [
+        "Ostsee"
+      ]
+    },
+    {
+      "question": "Wie heißt der größte See Deutschlands (vollständig in Deutschland)?",
+      "answers": [
+        "Müritz",
+        "Mueritz"
+      ]
+    },
+    {
+      "question": "In welchem Land steht der Eiffelturm?",
+      "answers": [
+        "Frankreich"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Norwegen?",
+      "answers": [
+        "Oslo"
+      ]
+    },
+    {
+      "question": "Welcher Fluss fließt durch Wien?",
+      "answers": [
+        "Donau"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Japan?",
+      "answers": [
+        "Tokio",
+        "Tokyo"
+      ]
+    },
+    {
+      "question": "Welcher Kontinent ist der kleinste?",
+      "answers": [
+        "Australien",
+        "Ozeanien"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt von Polen?",
+      "answers": [
+        "Warschau"
+      ]
+    },
+    {
+      "question": "In welchem Bundesland liegt München?",
+      "answers": [
+        "Bayern"
+      ]
+    },
+    {
+      "question": "Wie heißt die längste Gebirgskette der Welt (über Land)?",
+      "answers": [
+        "Anden"
+      ]
+    },
+    {
+      "question": "Wie heißt die Hauptstadt der Schweiz (Bundesstadt)?",
+      "answers": [
+        "Bern"
+      ]
+    },
+    {
+      "question": "Welches Land grenzt an die meisten anderen Länder Europas: Deutschland oder Spanien?",
+      "answers": [
+        "Deutschland"
+      ]
+    }
+  ]
+}

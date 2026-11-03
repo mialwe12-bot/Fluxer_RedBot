@@ -12,6 +12,8 @@ services:
       TZ: ${TZ:-Europe/Berlin}
     volumes:
       - bot-data:/data
+      # Optional für instadl (INSTAGRAM_COOKIES=/secrets/instagram-cookies.txt):
+      # - ./secrets:/secrets:ro
     # Kein eingehender Port nötig: der Bot verbindet sich nur ausgehend (REST + WebSocket).
     logging:
       driver: json-file

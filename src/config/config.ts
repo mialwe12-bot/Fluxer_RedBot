@@ -123,7 +123,6 @@ export class ScopedConfig<T extends ConfigData = ConfigData> {
   ) {}
 
   /** Wert lesen; nicht gesetzte Werte liefern den registrierten Default. */
-  get<K extends keyof T & string>(key: K): T[K];
   get<V = unknown>(key: string, fallback?: V): V;
   get(key: string, fallback?: unknown): unknown {
     const row = this.store.get(this.ns, this.scope, this.id, key);
@@ -134,8 +133,6 @@ export class ScopedConfig<T extends ConfigData = ConfigData> {
     throw new ConfigError(`Config-Schlüssel "${key}" ist im Scope "${this.scope}" von "${this.ns}" nicht registriert.`);
   }
 
-  set<K extends keyof T & string>(key: K, value: T[K]): void;
-  set(key: string, value: unknown): void;
   set(key: string, value: unknown): void {
     this.store.set(this.ns, this.scope, this.id, key, value);
   }

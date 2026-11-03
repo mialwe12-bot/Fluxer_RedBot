@@ -1,0 +1,17 @@
+{
+  "needChannel": "Aktiviert – jetzt noch den Kanal setzen: `{prefix}welcomeset channel #kanal`.",
+  "noSuchNumber": "Diese Nummer gibt es nicht.",
+  "settingsTitle": "Begrüßungen",
+  "titles": {
+    "join": "Begrüßungstexte",
+    "leave": "Abschiedstexte",
+    "ban": "Bann-Texte"
+  },
+  "f": {
+    "enabled": "Aktiv",
+    "channel": "Kanal",
+    "events": "Ereignisse",
+    "dm": "DM an neue Mitglieder",
+    "embed": "Als Embed"
+  }
+}

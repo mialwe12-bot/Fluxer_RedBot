@@ -52,6 +52,7 @@ export { PermissionFlags, PermissionLabels, hasPermissions, type PermissionName 
 export { NUMBER_EMOJIS, EMOJI, sameEmoji } from '../utils/menus.js';
 export { VoiceUnsupportedError, VOICE_CAPABILITIES } from '../platform/voice.js';
 export { resolveUser, resolveRole, resolveChannel, tokenize, usageOf, type ParseEnvironment } from '../commands/parser.js';
+export { fetchJson, fetchText, fetchBuffer, HttpError, USER_AGENT, type FetchOptions } from '../utils/http.js';
 
 /** Inhalt von manifest.json eines Cogs. */
 export interface CogManifest {

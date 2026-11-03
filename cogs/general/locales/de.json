@@ -1,0 +1,24 @@
+{
+  "notAQuestion": "Das ist keine Frage – bitte mit einem Fragezeichen enden lassen.",
+  "chooseMore": "Gib mindestens zwei Möglichkeiten an.",
+  "chosen": "🤔 Ich wähle: **{choice}**",
+  "heads": "🪙 Kopf!",
+  "tails": "🪙 Zahl!",
+  "rolled": "🎲 {user} würfelt **{number}**.",
+  "rpsWin": "du gewinnst! 🎉",
+  "rpsLose": "ich gewinne! 😎",
+  "rpsDraw": "unentschieden.",
+  "swStarted": "⏱️ Stoppuhr gestartet.",
+  "swStopped": "⏱️ Gestoppt: {time}.",
+  "si": {
+    "owner": "Besitzer",
+    "members": "Mitglieder",
+    "channels": "Kanäle",
+    "channelsValue": "{text} Text, {voice} Sprache",
+    "roles": "Rollen",
+    "inVoice": "In Sprachkanälen"
+  },
+  "urbanDown": "Urban Dictionary ist gerade nicht erreichbar.",
+  "urbanNone": "Dazu gibt es keinen Eintrag.",
+  "example": "Beispiel"
+}

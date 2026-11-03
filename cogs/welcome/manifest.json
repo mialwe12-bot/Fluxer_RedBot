@@ -1,0 +1,8 @@
+{
+  "name": "welcome",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Begrüßt neue Mitglieder, verabschiedet Gehende und meldet Banns – mit zufälligen Texten, Platzhaltern und optionaler DM.",
+  "displayName": "Willkommen",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

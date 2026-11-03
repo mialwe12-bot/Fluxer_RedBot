@@ -1,0 +1,21 @@
+{
+  "title": "💡 Vorschlag #{number}",
+  "anonymous": "Anonym",
+  "votes": "Stimmen",
+  "status": {
+    "approved": "✅ Angenommen",
+    "denied": "❌ Abgelehnt"
+  },
+  "notSetUp": "Vorschläge sind hier nicht eingerichtet (suggestset channel).",
+  "submitted": "Danke! Dein Vorschlag #{number} steht in {channel} zur Abstimmung.",
+  "needNumber": "Bitte die Nummer des Vorschlags angeben.",
+  "notFound": "Vorschlag #{number} gibt es nicht.",
+  "decided": {
+    "approved": "Vorschlag #{number} angenommen.",
+    "denied": "Vorschlag #{number} abgelehnt."
+  },
+  "dm": {
+    "approved": "✅ Dein Vorschlag #{number} auf **{server}** wurde angenommen.\nBegründung: {reason}",
+    "denied": "❌ Dein Vorschlag #{number} auf **{server}** wurde abgelehnt.\nBegründung: {reason}"
+  }
+}

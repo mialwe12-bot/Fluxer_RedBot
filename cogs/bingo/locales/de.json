@@ -1,0 +1,14 @@
+{
+  "noCard": "Du hast noch keine Karte – hol dir eine mit `{prefix}bingo`.",
+  "notEnoughTiles": "Für eine Karte braucht es mindestens 24 Felder (aktuell {count}). Ein Admin richtet sie mit `bingoset tiles` ein.",
+  "unknownCell": "Dieses Feld gibt es nicht – nutze z. B. B3, eine Zahl 1–25 oder einen eindeutigen Teil des Textes.",
+  "centerFree": "Das Mittelfeld ist immer frei. ⭐",
+  "bingo": "🎉 **BINGO!** {user} hat als {place}. eine volle Reihe!",
+  "reward": "Belohnung: {amount}.",
+  "noWinners": "Noch niemand hat Bingo.",
+  "newGame": "🔄 Neue Bingo-Runde! Holt euch eure neue Karte mit `{prefix}bingo`.",
+  "settingsTitle": "{name} – Felder",
+  "settingsFooter": "{count} Felder · Mitte: {free} · Belohnung: {reward}",
+  "tilesSet": "{count} Felder gespeichert.",
+  "tilesSetFew": "{count} Felder gespeichert – für eine Karte braucht es mindestens 24."
+}

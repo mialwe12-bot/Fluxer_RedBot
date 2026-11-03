@@ -1,0 +1,8 @@
+{
+  "name": "conversions",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Umrechnen: Einheiten (Länge, Gewicht, Temperatur, Volumen, Geschwindigkeit, Daten, Zeit, Fläche), Währungen (EZB-Kurse) und Kryptowährungen.",
+  "displayName": "Umrechnungen",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

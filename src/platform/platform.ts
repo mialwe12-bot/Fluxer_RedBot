@@ -656,6 +656,24 @@ export class FluxerPlatform extends EventEmitter {
     await this.rest.delete(`/users/@me/guilds/${guildId}`);
   }
 
+  /** Kanal anlegen (z. B. Tickets). type 0 = Text, 2 = Sprache, 4 = Kategorie. */
+  async createGuildChannel(
+    guildId: string,
+    body: { name: string; type?: number; parent_id?: string | null; topic?: string; permission_overwrites?: Array<{ id: string; type: 0 | 1; allow: string; deny: string }> },
+    reason?: string,
+  ): Promise<APIChannel> {
+    const channel = await this.rest.post<APIChannel>(`/guilds/${guildId}/channels`, this.withReason(reason, { body: { type: 0, ...body } }));
+    if (channel?.id) this.upsertChannel({ ...channel, guild_id: guildId });
+    return channel;
+  }
+
+  async deleteChannel(channelId: string, reason?: string): Promise<void> {
+    await this.rest.delete(`/channels/${channelId}`, this.withReason(reason));
+    const gid = this.channelGuild.get(channelId);
+    if (gid) this.guilds.get(gid)?.channels.delete(channelId);
+    this.channelGuild.delete(channelId);
+  }
+
   // ---------------------------------------------------------------- Bot-Profil/Presence
 
   async editCurrentUser(body: { username?: string; avatar?: string | null }): Promise<APIUser> {
