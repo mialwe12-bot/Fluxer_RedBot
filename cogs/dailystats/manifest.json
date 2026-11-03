@@ -1,0 +1,8 @@
+{
+  "name": "dailystats",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Aktivitäts-Statistiken (nur Zähler, keine Inhalte): Tageszusammenfassung, wöchentliches „Wrapped“ mit Awards, persönliches !wrapped und Jahresrückblick.",
+  "displayName": "Statistiken",
+  "endUserData": "Speichert pro Tag nur Zähler: Anzahl Nachrichten je Benutzer/Kanal/Stunde, Sprachzeit, genutzte Emojis, Beitritte/Austritte. Keine Nachrichteninhalte. Opt-out mit `stats optout`, Löschen mit `stats delete`."
+}

@@ -1,0 +1,18 @@
+{
+  "reason": "Verbotenes Spiel: {game}",
+  "dm": "⛔ Auf **{server}** ist das Spiel **{game}** nicht erlaubt. Du hast deshalb einen Timeout von {time} bekommen.",
+  "log": "⛔ {user} spielte **{game}** → Timeout {time}.",
+  "title": "Spiele-Blacklist",
+  "footer": "Funktioniert nur, wenn Fluxer Spiel-Aktivitäten liefert – siehe gameblacklist status.",
+  "f": {
+    "enabled": "Aktiv",
+    "timeout": "Timeout",
+    "dm": "DM",
+    "games": "Verbotene Spiele",
+    "ignored": "Ausgenommene Rollen"
+  },
+  "enabledNoData": "Aktiviert. ⚠️ Seit dem Start habe ich aber noch keine einzige Spiel-Aktivität von Fluxer empfangen – möglicherweise meldet Fluxer gar keine Spiele. Prüfe es später mit `gameblacklist status`.",
+  "badDuration": "Ungültige Dauer – 10 Sekunden bis 28 Tage, z. B. 10m oder 1h.",
+  "status": "📡 Seit dem Start empfangen: {presences} Presence-Updates, davon {activities} mit Spiel-Aktivität.\nZuletzt gesehen: {last}",
+  "noData": "⚠️ Noch keine Spiel-Aktivitäten – solange das so bleibt, kann die Blacklist nicht greifen."
+}

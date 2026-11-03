@@ -1,0 +1,8 @@
+{
+  "name": "afkchannel",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Verschiebt Mitglieder, die sich im Sprachkanal taub schalten, nach einer Wartezeit automatisch in den AFK-Kanal – optional zurück beim Ent-Taubschalten.",
+  "displayName": "AFK-Kanal",
+  "endUserData": "Speichert vorübergehend, aus welchem Sprachkanal ein Mitglied verschoben wurde."
+}

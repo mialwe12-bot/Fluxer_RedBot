@@ -1,0 +1,49 @@
+{
+  "noTmdb": "Für Serien und Filme fehlt TMDB_API_KEY in der .env (kostenlos unter themoviedb.org → Einstellungen → API). Animes gehen ohne Key.",
+  "needTitle": "Bitte einen Titel angeben.",
+  "noHits": "Nichts gefunden.",
+  "episodes": "Folgen",
+  "chooseTitle": "Welchen Titel meinst du?",
+  "already": "**{title}** steht schon auf deiner Watchlist.",
+  "added": "✅ **{title}** hinzugefügt (Status: geplant). Weiter mit `{prefix}watch progress`, `{prefix}watch status`.",
+  "ambiguous": "Mehrere Treffer: {titles} – bitte genauer oder die Nummer aus `watch list` angeben.",
+  "notFound": "`{ref}` steht nicht auf deiner Watchlist.",
+  "badStatus": "Unbekannter Status – möglich: schaue, fertig, geplant, pausiert, abgebrochen.",
+  "statusSet": "**{title}**: {status}.",
+  "movieNoProgress": "Filme haben keinen Folgen-Fortschritt – nutze `watch status <film> fertig`.",
+  "badProgress": "Fortschritt nicht verstanden – z. B. `+1`, `12` oder `S2E5`.",
+  "progressSet": "**{title}**: jetzt bei {progress}.",
+  "progressDone": "🎉 **{title}** abgeschlossen ({progress})!",
+  "rated": "**{title}**: ⭐ {rating}/10",
+  "emptyList": "Deine Watchlist ist leer – füge etwas mit `{prefix}watch add <titel>` hinzu.",
+  "listTitle": "Watchlist von {name}",
+  "removed": "**{title}** entfernt.",
+  "noUpcoming": "Keine bekannten kommenden Termine. (Daten werden alle 30 Minuten aktualisiert.)",
+  "upcomingTitle": "📅 Demnächst",
+  "upAnime": "🎌 **{title}** – Folge {episode}",
+  "upTv": "📺 **{title}** – {ep}",
+  "up": {
+    "theatrical": "🎬 **{title}** – Kinostart",
+    "digital": "🎬 **{title}** – digital/Streaming"
+  },
+  "newEpisode": "🎌 Neue Folge: **{title}** – Folge {episode} ist erschienen!",
+  "newTvEpisode": "📺 Neue Folge: **{title}** – S{season}E{episode} {name}",
+  "newSeason": "📺🎉 Neue Staffel: **{title}** – Staffel {season} ist gestartet (S{season}E{episode})!",
+  "release": {
+    "theatrical": "🎬 **{title}** läuft ab heute im Kino!",
+    "digital": "🎬 **{title}** ist ab heute digital/im Streaming erhältlich!"
+  },
+  "statuses": {
+    "watching": "am Schauen",
+    "completed": "abgeschlossen",
+    "planned": "geplant",
+    "paused": "pausiert",
+    "dropped": "abgebrochen"
+  },
+  "channelInGuild": "Führe `watch notify kanal` in dem Kanal aus, in den die Meldungen sollen.",
+  "notify": {
+    "dm": "Neuerscheinungen bekommst du per DM.",
+    "channel": "Neuerscheinungen werden in {channel} gemeldet.",
+    "off": "Benachrichtigungen sind aus."
+  }
+}

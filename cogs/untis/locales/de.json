@@ -1,0 +1,42 @@
+{
+  "noKey": "Der Bot-Betreiber hat keinen UNTIS_ENCRYPTION_KEY gesetzt – ohne Verschlüsselung speichere ich keine Zugangsdaten.",
+  "badCredentials": "Anmeldung fehlgeschlagen: Benutzername oder Passwort stimmen nicht (oder die Schule ist falsch geschrieben).",
+  "badServer": "Den WebUntis-Server gibt es nicht. Er steht in der Adresszeile, z. B. neilo.webuntis.com.",
+  "loginFailed": "Anmeldung bei WebUntis fehlgeschlagen: {reason}",
+  "publicWarning": "⚠️ {user}, bitte **niemals** Zugangsdaten in einen Server-Kanal schreiben! Ich habe die Nachricht gelöscht. Schick mir den Befehl per **Direktnachricht** – und ändere zur Sicherheit dein Passwort.",
+  "publicWarningDm": "Deine Nachricht mit WebUntis-Zugangsdaten war in einem Server-Kanal und wurde gelöscht. Bitte ändere dein Passwort und schick mir `untis login …` hier per DM.",
+  "notLoggedIn": "Du bist nicht angemeldet. Schick mir per DM: `{prefix}untis login <server> \"<schule>\" <benutzer> <passwort>`.",
+  "loggedIn": "✅ Angemeldet! Dein Passwort ist verschlüsselt gespeichert. Ich melde dir Änderungen per DM (ändern: `{prefix}untis notify`). Probier `{prefix}untis heute`.",
+  "today": "Heute",
+  "tomorrow": "Morgen",
+  "week": "Die nächsten 7 Tage",
+  "free": "Kein Unterricht. 🎉",
+  "sentDm": "📬 Dein Stundenplan kommt per DM.",
+  "channelInGuild": "Führe `untis notify kanal` in dem Server-Kanal aus, in den die Meldungen sollen.",
+  "notify": {
+    "dm": "Änderungen bekommst du ab jetzt per DM.",
+    "channel": "Änderungen werden ab jetzt in {channel} gemeldet (mit Erwähnung).",
+    "off": "Benachrichtigungen sind aus."
+  },
+  "notifyShort": {
+    "dm": "per DM",
+    "channel": "im Kanal",
+    "off": "aus"
+  },
+  "status": "Angemeldet bei **{school}** ({server}) als `{user}`. Benachrichtigungen: {notify}.",
+  "checkFound": {
+    "one": "{count} neue Änderung gemeldet.",
+    "other": "{count} neue Änderungen gemeldet."
+  },
+  "checkNone": "Keine neuen Änderungen.",
+  "forgotten": "🗑️ Abgemeldet – alle deine WebUntis-Daten sind gelöscht.",
+  "disabledAfterFailures": "⚠️ Ich konnte deinen Stundenplan dreimal nicht abrufen ({reason}). Die Benachrichtigungen sind pausiert – bitte melde dich mit `untis login` neu an.",
+  "changesTitle": "**Stundenplan-Änderungen**",
+  "changes": {
+    "cancelled": "❌ Entfall",
+    "substitution": "🔁 Vertretung / Sonderstunde {text}",
+    "teacher": "👤 Lehrerwechsel: {from} → {to}",
+    "room": "🚪 Raumänderung: {from} → {to}",
+    "time": "⏰ Neue Zeit: {from} → {to}"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "birthday",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Geburtstage speichern, Glückwünsche im Kanal, Geburtstagsrolle für 24 Stunden und optionale Vorab-Erinnerung.",
+  "displayName": "Geburtstage",
+  "endUserData": "Speichert Geburtstag (Tag, Monat, optional Jahr) pro Benutzer – löschbar mit `birthday remove`."
+}

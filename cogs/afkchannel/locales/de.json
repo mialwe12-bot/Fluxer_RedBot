@@ -1,0 +1,19 @@
+{
+  "auditReason": "Länger als {time} taub geschaltet",
+  "backReason": "Nicht mehr taub geschaltet",
+  "settingsTitle": "AFK-Kanal",
+  "native": "Server-Einstellung",
+  "f": {
+    "enabled": "Aktiv",
+    "channel": "AFK-Kanal",
+    "delay": "Wartezeit",
+    "moveBack": "Zurückverschieben",
+    "ignored": "Ausgenommen"
+  },
+  "set": "AFK-Kanal ist jetzt {channel}. Wer sich {delay} lang taub schaltet, wird verschoben.",
+  "noMovePerm": "Mir fehlt das Recht „Mitglieder verschieben“ – ohne das funktioniert es nicht.",
+  "noChannel": "Erst einen AFK-Kanal festlegen: `{prefix}afkchannel set #kanal`.",
+  "badTarget": "Bitte @rolle, @user oder #kanal angeben.",
+  "ignoreOn": "Wird ab jetzt nicht mehr verschoben.",
+  "ignoreOff": "Wird wieder verschoben."
+}

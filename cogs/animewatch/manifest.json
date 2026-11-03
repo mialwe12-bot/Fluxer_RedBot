@@ -1,0 +1,8 @@
+{
+  "name": "animewatch",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Watchlist für Animes (AniList), Serien und Filme (TMDB) mit Status, Folge/Staffel, Bewertung und Benachrichtigung bei neuen Folgen, Staffeln und Starts.",
+  "displayName": "Watchlist",
+  "endUserData": "Speichert deine Watchlist (Titel, Status, Fortschritt, Bewertung) und dein Benachrichtigungsziel."
+}

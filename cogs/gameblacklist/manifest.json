@@ -1,0 +1,8 @@
+{
+  "name": "gameblacklist",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Spiele-Blacklist: Wer ein verbotenes Spiel spielt, bekommt einen Timeout. Funktioniert nur, wenn Fluxer Spiel-Aktivitäten (Presence) liefert.",
+  "displayName": "Spiele-Blacklist",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

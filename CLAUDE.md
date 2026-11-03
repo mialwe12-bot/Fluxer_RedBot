@@ -20,7 +20,7 @@ Modularer Fluxer-Bot nach Red-DiscordBot-Vorbild. Alle Bot-Texte, das README und
 ## Fluxer-Fakten (Recherche Okt. 2026)
 - Keine Intents, keine Interactions/Buttons/Slash-Commands
 - Gateway-URL aus `GET /gateway/bot`, unverändert nutzen
-- Voice: VOICE_STATE_UPDATE ja; Audio über LiveKit (op 4 → VOICE_SERVER_UPDATE-Grant, 600 s), `@fluxerjs/voice` existiert, ungetestet
+- Voice: VOICE_STATE_UPDATE ja; Audio über LiveKit: `src/platform/voiceService.ts` (op 4 mit mutation_id → VOICE_SERVER_UPDATE/VOICE_STATE_ACK → `LiveKitRtcConnection` aus @fluxerjs/voice mit Stub-Client). `bot.voice.join/playAndWait/leave`. play() erwartet WebM/Opus; kein end-Event → Polling von `playing`. Gegen echte Instanz ungetestet
 - PRESENCE_UPDATE hat `activities`; ob Spiele gemeldet werden, ist unklar
 - Member-PATCH: `channel_id` (verschieben), `communication_disabled_until` + `timeout_reason` (Timeout)
 
@@ -28,7 +28,7 @@ Modularer Fluxer-Bot nach Red-DiscordBot-Vorbild. Alle Bot-Texte, das README und
 1. Kern + example/permissions/downloader ✅
 2. admin, alias, mod, modlog, extendedmodlog, mutes, warnings, automod, filter, retrigger, inviteblocklist, cleanup, reports, roletools ✅
 3. general, customcom, welcome, suggestions, tickets, levelup, badges, economy, trivia, bingo, conversions, eventposter, streams, image, instadl ✅
-4. afkchannel, untis, animewatch, dailystats, birthday, gameblacklist, jellyfinmusic
+4. afkchannel, untis, animewatch, dailystats, birthday, gameblacklist, jellyfinmusic ✅
 5. audio, Downloader-Erweiterungen
 
 Nach jeder Phase fragt Claude, ob es weitergeht.
@@ -45,6 +45,12 @@ Nach jeder Phase fragt Claude, ob es weitergeht.
 - APIs: economy (`EconomyApi`), levelup (`LevelupApi`, Event `levelUp`), mutes, warnings, modlog
 - Config-`get<T>()` hat nur noch die generische Überladung (vorher lieferte `get<string>` fälschlich `unknown`)
 - yt-dlp liegt im Docker-Image (`/usr/local/bin/yt-dlp`), wird von instadl und später audio/jellyfinmusic genutzt
+
+## Konventionen (Phase 4)
+- `bot.voice` (VoiceService); Musik-API von jellyfinmusic (`MusicApi`: enqueue, queue, setLoop, shuffle, skip, stop, resolveQuery) → Basis für Phase-5-Cog `audio`
+- untis: Schlüssel UNTIS_ENCRYPTION_KEY (hex/base64, 32 Byte); `untis login` in Servern wird immer gelöscht (Listener)
+- dailystats/levelup zählen keine Befehle (Prefix-Nachrichten)
+- Tests: Fake-LiveKit (`FakeRtc`), `globalThis.fetch` für AniList fälschen, `scheduler.runNow`
 
 ## Befehle
 - `npm test`, `npm run typecheck`, `npm run build`

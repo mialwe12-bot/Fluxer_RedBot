@@ -13,6 +13,7 @@ import type { Env } from './env.js';
 import { I18n, type Vars } from './i18n/i18n.js';
 import type { Logger } from './logger.js';
 import { PermissionFlags } from './platform/permissionBits.js';
+import { VoiceService } from './platform/voiceService.js';
 import type { FluxerPlatform } from './platform/platform.js';
 import type { APIMessage, BotStatus, MessagePayload } from './platform/types.js';
 import { LEVEL_ORDER, PermissionManager } from './permissions/permissions.js';
@@ -73,6 +74,8 @@ export class Bot {
   readonly help: HelpFormatter;
   readonly cogs: CogLoader;
   readonly dispatcher: CommandDispatcher;
+  /** Sprachverbindungen (Audio über LiveKit, experimentell). */
+  readonly voice: VoiceService;
   readonly menus;
   isReady = false;
   appOwnerId: string | null = null;
@@ -147,6 +150,7 @@ export class Bot {
       extraNodePaths: [path.join(this.env.dataDir, 'cog-libs', 'node_modules')],
     });
     this.dispatcher = new CommandDispatcher(this);
+    this.voice = new VoiceService(this.platform, this.log.child({ module: 'voice' }));
   }
 
   // ------------------------------------------------------------------ Einstellungen
@@ -406,6 +410,7 @@ export class Bot {
       this.log.warn({ err }, 'Fehler beim Entladen der Cogs');
     }
     this.scheduler.stopAll();
+    this.voice.destroyAll();
     this.platform.destroy();
     try {
       this.db.close();

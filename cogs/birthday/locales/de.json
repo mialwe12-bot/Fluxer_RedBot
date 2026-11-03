@@ -1,0 +1,23 @@
+{
+  "age": "Du wirst heute {age}! 🎂",
+  "roleReason": "Geburtstag",
+  "reminder": "🎈 Morgen haben Geburtstag: {users}",
+  "badDate": "Datum nicht erkannt – z. B. `24.12.` oder `24.12.2000`.",
+  "saved": "🎂 Gespeichert: {date}.",
+  "removed": "Dein Geburtstag wurde gelöscht.",
+  "none": "Von {user} ist kein Geburtstag gespeichert.",
+  "show": "🎂 {user} hat am {date} Geburtstag – noch {days} Tage.",
+  "showToday": "🎉 {user} hat **heute** Geburtstag ({date})!",
+  "emptyList": "Hier hat noch niemand einen Geburtstag eingetragen (`birthday set TT.MM.`).",
+  "listTitle": "🎂 Nächste Geburtstage",
+  "today": "heute",
+  "inDays": {
+    "one": "morgen",
+    "other": "in {count} Tagen"
+  },
+  "badTime": "Bitte im Format HH:MM, z. B. 09:00.",
+  "tested": {
+    "one": "{count} Geburtstag gefeiert.",
+    "other": "{count} Geburtstage gefeiert."
+  }
+}

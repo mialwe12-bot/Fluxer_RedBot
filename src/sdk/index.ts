@@ -17,6 +17,7 @@ export type { Translator, Vars } from '../i18n/i18n.js';
 export type { ResolvedUser, ResolvedMentionable } from '../commands/parser.js';
 export type { ReactionEvent, Page } from '../utils/menus.js';
 export type { CachedMessage } from '../platform/platform.js';
+export type { VoiceService, VoiceSession } from '../platform/voiceService.js';
 export type * from '../platform/types.js';
 
 export {

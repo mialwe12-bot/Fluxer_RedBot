@@ -1,0 +1,59 @@
+{
+  "nMsgs": {
+    "one": "{count} Nachricht",
+    "other": "{count} Nachrichten"
+  },
+  "daily": {
+    "title": "📊 Tagesrückblick – {date}",
+    "summary": "Heute: **{msgs} Nachrichten** ({change} zu gestern) und **{voice}** im Sprachkanal."
+  },
+  "f": {
+    "topUsers": "💬 Aktivste Mitglieder",
+    "topChannels": "#️⃣ Aktivste Kanäle",
+    "voice": "🎙️ Im Sprachkanal",
+    "voiceChamps": "🎙️ Voice-Champions",
+    "emoji": "😀 Emoji des Tages",
+    "favEmoji": "😍 Lieblings-Emojis",
+    "hour": "🕐 Aktivste Zeit",
+    "members": "👥 Neu / gegangen",
+    "yourChannels": "Deine Kanäle",
+    "yourHour": "Deine Uhrzeit",
+    "yourEmojis": "Deine Emojis"
+  },
+  "wrapped": {
+    "weekTitle": "🎧 {server} Wrapped – deine Woche",
+    "yearTitle": "🎆 {server} Wrapped – das Jahr",
+    "intro": "**{msgs}** Nachrichten ({msgChange} zum Vorzeitraum) · **{voice}** Sprachzeit ({voiceChange}) · **+{joins}** neue und **−{leaves}** gegangene Mitglieder",
+    "awardsTitle": "🏆 Die Awards",
+    "noAwards": "Diesmal war es zu ruhig für Awards. 😴",
+    "footer": "Nur Zähler, keine Inhalte · Opt-out: stats optout"
+  },
+  "awards": {
+    "talker": "🗣️ **Dauerredner:** {user} mit {n} Nachrichten",
+    "voice": "🎙️ **Voice-Champion:** {user} mit {time} im Sprachkanal",
+    "owl": "🦉 **Nachteule:** {user} – {n} Nachrichten zwischen 0 und 5 Uhr",
+    "bird": "🐓 **Frühaufsteher:** {user} – {n} Nachrichten zwischen 5 und 9 Uhr",
+    "hopper": "🧭 **Kanal-Hopper:** {user} war in {n} Kanälen unterwegs",
+    "emoji": "😂 **Emoji-Fan:** {user} mit {n} Emojis"
+  },
+  "personal": {
+    "title": "🎧 Wrapped von {name} – {period}",
+    "intro": "Du hast **{msgs} Nachrichten** geschrieben (Platz {rank} von {total}) und **{voice}** im Sprachkanal verbracht.",
+    "nothing": "In diesem Zeitraum gibt es (noch) keine Daten."
+  },
+  "periods": {
+    "week": "letzte 7 Tage",
+    "month": "letzte 30 Tage",
+    "today": "heute"
+  },
+  "optedOutInfo": "Diese Person hat der Erfassung widersprochen.",
+  "optedOut": "Du wirst ab jetzt nicht mehr erfasst. Bisherige Zähler löschst du mit `{prefix}stats delete`.",
+  "optedIn": "Du wirst wieder erfasst.",
+  "deleteConfirm": "Wirklich **alle** deine Statistik-Zähler auf allen Servern löschen?",
+  "deleted": "{count} Einträge gelöscht.",
+  "settingsTitle": "Statistik-Einstellungen",
+  "settingsBody": "Erfassung: {enabled}\nKanal: {channel}\nTageszusammenfassung: {daily}\nWrapped: {weekly}\nJahresrückblick (31.12.): {yearly}",
+  "badTime": "Bitte HH:MM angeben, z. B. 22:00.",
+  "badDay": "Unbekannter Wochentag.",
+  "resetConfirm": "Wirklich **alle** Statistiken dieses Servers löschen?"
+}

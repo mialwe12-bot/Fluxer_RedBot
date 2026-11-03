@@ -5,15 +5,13 @@
  * - Mitglieder verschieben: ja (angenommen) – PATCH /guilds/{id}/members/{user} mit channel_id,
  *   wie bei Discord; @fluxerjs/core unterstützt das Feld. Benötigt "Mitglieder verschieben".
  * - Audio senden: Fluxer nutzt LiveKit. Der Bot sendet op 4 (Voice State Update), erhält per
- *   VOICE_SERVER_UPDATE einen Grant (endpoint + token, 600 s gültig) und muss dann das LiveKit-
- *   Protokoll sprechen. Das ist im Kern nicht enthalten; jellyfinmusic/audio (Phase 4/5) prüfen
- *   @fluxerjs/voice. Bis dahin wirft jeder Audio-Aufruf VoiceUnsupportedError.
+ *   VOICE_SERVER_UPDATE einen Grant (endpoint + token, 600 s gültig) und spricht dann LiveKit.
+ *   Umgesetzt in voiceService.ts mit LiveKitRtcConnection aus @fluxerjs/voice (experimentell,
+ *   gegen eine echte Instanz ungetestet). Fehler werden als VoiceUnsupportedError gemeldet.
  */
 export class VoiceUnsupportedError extends Error {
   constructor(detail?: string) {
-    super(
-      'Sprachausgabe (Audio) wird von diesem Bot auf Fluxer noch nicht unterstützt.' + (detail ? ` ${detail}` : ''),
-    );
+    super(detail ? `Sprachausgabe nicht möglich: ${detail}` : 'Sprachausgabe (Audio) ist auf dieser Instanz nicht verfügbar.');
     this.name = 'VoiceUnsupportedError';
   }
 }
@@ -27,7 +25,8 @@ export interface VoiceCapabilities {
 export const VOICE_CAPABILITIES: VoiceCapabilities = {
   receiveVoiceStates: true,
   moveMembers: true,
-  playAudio: false,
+  /** Experimentell über @fluxerjs/voice (LiveKit), siehe voiceService.ts. */
+  playAudio: true,
 };
 
 /** Platzhalter für die spätere Audio-Anbindung (LiveKit). */

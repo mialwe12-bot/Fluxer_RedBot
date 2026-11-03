@@ -1,0 +1,8 @@
+{
+  "name": "jellyfinmusic",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Musik im Sprachkanal von YouTube und vom eigenen Jellyfin-Server – mit Warteschlange, Überspringen und Lautstärke. Experimentell: Bot-Audio auf Fluxer läuft über LiveKit.",
+  "displayName": "Musik",
+  "endUserData": "Speichert keine Nutzerdaten."
+}

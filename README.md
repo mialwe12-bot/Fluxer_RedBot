@@ -10,7 +10,7 @@ Ein modularer Bot für die Chat-Plattform **Fluxer**, gebaut nach dem Vorbild vo
 - Befehle intern im Slash-Command-Format, damit sich native Slash-Commands später ergänzen lassen
 - Docker (multi-stage, non-root), Healthcheck, Watchdog, Auto-Reconnect, Zeitzone Europe/Berlin
 
-> **Stand:** Phase 1 (Kern), Phase 2 (Server-Verwaltung und Moderation) und Phase 3 (Community und Alltag) sind fertig. Phase 4 und 5 folgen, siehe [Cog-Status](#cog-status).
+> **Stand:** Phasen 1–4 sind fertig (Kern, Moderation, Community, Spezial-Cogs). Phase 5 (audio, Downloader-Erweiterungen) folgt, siehe [Cog-Status](#cog-status).
 
 ---
 
@@ -51,7 +51,8 @@ fluxer-redbot/
 │   │   ├── platform.ts         # Fluxer-REST + Gateway, Cache (Guilds, Rollen, Kanäle, Mitglieder, Voice)
 │   │   ├── permissionBits.ts   # Rechte-Bits und Berechnung inkl. Kanal-Overwrites
 │   │   ├── types.ts            # Typen (basierend auf @fluxerjs/types)
-│   │   └── voice.ts            # Voice-Fähigkeiten und Audio-Stub
+│   │   ├── voice.ts            # Voice-Fähigkeiten, Fehlerklasse
+│   │   └── voiceService.ts     # Sprachkanal-Handshake + LiveKit-Audio (experimentell)
 │   ├── cogs/
 │   │   ├── cog.ts              # Laufzeitobjekt eines Cogs (an setup() übergeben)
 │   │   └── loader.ts           # Laden/Entladen/Neuladen (esbuild-Bundle + import())
@@ -79,8 +80,9 @@ fluxer-redbot/
 │   ├── downloader/             # Git-Repos als Cog-Quellen
 │   ├── modlog/ mod/ mutes/ warnings/ cleanup/ filter/ automod/ retrigger/
 │       inviteblocklist/ reports/ roletools/ alias/ admin/ extendedmodlog/   # Phase 2
-│   └── economy/ levelup/ badges/ general/ customcom/ welcome/ suggestions/ tickets/
+│   ├── economy/ levelup/ badges/ general/ customcom/ welcome/ suggestions/ tickets/
 │       trivia/ (inkl. lists/*.json) bingo/ conversions/ eventposter/ streams/ image/ instadl/   # Phase 3
+│   └── afkchannel/ untis/ animewatch/ dailystats/ birthday/ gameblacklist/ jellyfinmusic/   # Phase 4
 └── tests/                      # Vitest: Loader, Config-API, Rechte, Parser, Dispatcher, Phase-2-Cogs
 ```
 
@@ -171,6 +173,9 @@ Verbinden/Sprechen, Kanäle verwalten, Audit-Log). Im Chat liefert `!invite` den
 | `INSTAGRAM_COOKIES` | – | instadl: Pfad zu einer Cookie-Datei (Netscape-Format), falls Instagram eine Anmeldung verlangt |
 | `UPLOAD_LIMIT_MB` | `25` | instadl: max. Dateigröße für Uploads (**Annahme** zum Limit der Instanz) |
 | `YTDLP_PATH` | `yt-dlp` | Pfad zu yt-dlp (im Docker-Image enthalten) |
+| `UNTIS_ENCRYPTION_KEY` | – | untis: 32-Byte-Schlüssel (Hex) für die Passwort-Verschlüsselung – `openssl rand -hex 32` |
+| `TMDB_API_KEY` | – | animewatch: Serien und Filme (Animes über AniList ohne Key) |
+| `JELLYFIN_URL` / `JELLYFIN_API_KEY` / `JELLYFIN_USER_ID` | `https://jellyfin.mrcoolgamer.de` | jellyfinmusic |
 
 **Gateway-URL:** Sie wird nicht geraten, sondern über `GET {API}/v1/gateway/bot` abgefragt und
 **unverändert** verwendet (keine Umschreibung von `ws` auf `wss`), wie es die Fluxer-Doku verlangt.
@@ -692,9 +697,112 @@ Bank wie bei Red: pro Server, oder mit `bank setglobal an` (Owner) eine gemeinsa
   im compose `./secrets:/secrets:ro` aktivieren, dann `INSTAGRAM_COOKIES=/secrets/instagram-cookies.txt`.
 - Dateien über `UPLOAD_LIMIT_MB` werden übersprungen. Höchstens 2 Downloads laufen gleichzeitig.
 
+### afkchannel
+
+- `afkchannel set #sprachkanal` setzt den AFK-Kanal und aktiviert die Funktion. Ohne eigene Angabe gilt der in den
+  Server-Einstellungen hinterlegte AFK-Kanal.
+- Wer im Sprachkanal **taub geschaltet** ist (self_deaf), wird nach der Wartezeit (`afkchannel delay <sekunden>`,
+  Standard 60 s, 0 = sofort) verschoben. Wer vorher wieder hört, bleibt.
+- `afkchannel moveback an`: Beim Ent-Taubschalten im AFK-Kanal geht es zurück in den vorherigen Kanal. Der wird
+  gespeichert und übersteht auch einen Neustart.
+- `afkchannel ignore @rolle|@user|#kanal` (umschalten), `afkchannel toggle an|aus`, `afkchannel` zeigt die
+  Einstellungen.
+- Der Bot braucht das Recht **Mitglieder verschieben**. `afkchannel set` prüft das und warnt.
+
+### untis
+
+- **Zugangsdaten nur per DM:** `untis login <server> "<schule>" <benutzer> <passwort>`.
+  Server = Adresse aus WebUntis, z. B. `neilo.webuntis.com`. Der Bot testet den Login, bevor er speichert.
+- Jede `untis login`-Nachricht in einem Server-Kanal löscht der Bot sofort und warnt öffentlich und per DM, auch
+  ohne gültiges Prefix (z. B. `/untis login …`).
+- Passwörter liegen **AES-256-GCM-verschlüsselt** in der Datenbank. Der Schlüssel kommt aus `UNTIS_ENCRYPTION_KEY`;
+  ohne Schlüssel speichert der Bot nichts.
+- `untis heute|morgen|woche`: im Server kommt der Plan per DM. `untis status`, `untis check`.
+  `untis forget` meldet ab und löscht alles.
+- **Benachrichtigungen:** `untis notify dm|kanal|aus`. `kanal` im gewünschten Server-Kanal ausführen.
+- Ein Hintergrund-Check (Standard alle 15 Minuten, `untisset interval <min>` als Owner) vergleicht die nächsten
+  7 Tage mit dem letzten Stand und meldet:
+  ❌ Entfall, 🔁 Vertretung/Sonderstunde, 👤 Lehrerwechsel, 🚪 Raumänderung, ⏰ geänderte Zeiten.
+- Jede Änderung wird nur einmal gemeldet. Die Session wird pro Abruf geöffnet und wieder geschlossen.
+- Nach 3 fehlgeschlagenen Logins pausieren die Benachrichtigungen, und die Person bekommt eine DM.
+- **Annahmen:**
+  - Lehrer- und Raumwechsel erkennt der Bot an WebUntis' `orgname` (ursprünglicher Wert) oder am Vergleich mit dem
+    letzten Stand.
+  - Konten ohne eigenen Stundenplan bekommen den Klassenplan.
+  - Gegen einen echten WebUntis-Server ungetestet (aus der Entwicklungsumgebung nicht erreichbar).
+
+### animewatch
+
+- `watch add [anime|serie|film] <titel>` sucht Animes über AniList (ohne Key) und Serien/Filme über TMDB (mit
+  `TMDB_API_KEY`). Auswahl per 1️⃣–5️⃣.
+- `watch status <eintrag> schaue|fertig|geplant|pausiert|abgebrochen`.
+- `watch progress <eintrag> [+n|folge|S2E5]`: ohne Angabe +1 Folge. Bei der letzten Folge setzt der Bot automatisch
+  „abgeschlossen“.
+- `watch rate <eintrag> <1–10>`, `watch list [status] [@user]`, `watch remove`, `watch upcoming`,
+  `watch notify dm|kanal|aus`. `<eintrag>` ist die Nummer aus `watch list` oder ein Teil des Titels.
+- Der Release-Check läuft alle 30 Minuten für Titel mit Status schaue, geplant oder pausiert:
+  - Anime: neue Folge laut AniList-Ausstrahlungsplan.
+  - Serie: neue Folge bzw. neue Staffel laut TMDB.
+  - Film: Kinostart bzw. digitaler Start in Deutschland laut TMDB.
+- Gemeldet wird jeweils einmal. Beim ersten Abruf merkt sich der Bot nur den Stand und meldet nichts.
+
+### dailystats
+
+- **Erfasst nur Zähler, nie Inhalte:**
+  - Nachrichten pro Mitglied, Kanal und Stunde
+  - Sprachzeit pro Mitglied und Kanal (ohne AFK-Kanal)
+  - genutzte Emojis (auch Reaktionen)
+  - Beitritte und Austritte
+- Bots und Bot-Befehle zählen nicht. Daten älter als 400 Tage werden gelöscht.
+- `statsset channel #kanal`, dann automatisch:
+  - **Tagesrückblick** (`statsset daily 22:00`)
+  - **Wrapped** jede Woche (`statsset weekly Sonntag 18:00`): Top-Mitglieder, Top-Kanäle, Voice-Champions,
+    Lieblings-Emojis, aktivste Tageszeit, Vergleich zur Vorwoche
+  - **Jahresrückblick** am 31.12. (`statsset yearly an`)
+- **Awards:** 🗣️ Dauerredner, 🎙️ Voice-Champion, 🦉 Nachteule (0–5 Uhr), 🐓 Frühaufsteher (5–9 Uhr),
+  🧭 Kanal-Hopper, 😂 Emoji-Fan.
+- `wrapped [woche|monat|jahr|heute] [@user]` zeigt die persönlichen Stats. `stats today|week|year` sind Vorschauen.
+- **Datenschutz:** `stats optout` / `stats optin`. `stats delete` löscht deine Zähler auf allen Servern.
+  `statsset reset` (Serverbesitzer) löscht alles auf dem Server.
+
+### birthday
+
+- `birthday set 24.12.` oder `24.12.2000` (das Jahr sieht nur die Person selbst), `birthday remove`,
+  `birthday show [@user]`, `birthday list`.
+- `bdset channel #kanal`, `bdset time 09:00`, `bdset message <text>` (`{user}`, `{age}`, `{server}`).
+- `bdset role @rolle`: Die Rolle gibt es für **24 Stunden**; das Entfernen übersteht auch Neustarts.
+- `bdset reminder an` weist am Vortag auf morgige Geburtstage hin. `bdset test` löst den Glückwunsch sofort aus.
+- 29. Februar: In Nicht-Schaltjahren wird am 28. gefeiert.
+
+### gameblacklist
+
+- `gameblacklist add <spiel>` (exakter Name; `*` am Ende = „beginnt mit“), `remove`, `toggle an`,
+  `timeout <dauer>` (Standard 10 min), `ignore @rolle`, `dm an|aus`, `log #kanal`.
+- Mods und Admins sind ausgenommen.
+- ⚠️ **Hängt davon ab, ob Fluxer Spiel-Aktivitäten in `PRESENCE_UPDATE` liefert.** Die Fluxer-Typen kennen das Feld
+  `activities`, aber ob die Fluxer-Apps laufende Spiele melden, ist unbekannt.
+- `gameblacklist status` zeigt, wie viele Presence-Updates und Spiel-Aktivitäten seit dem Start ankamen. Bleibt das
+  bei 0, kann die Blacklist nicht greifen. Beim Aktivieren weist der Bot darauf hin.
+
+### jellyfinmusic
+
+- **Bot-Audio ist experimentell:** Fluxer nutzt LiveKit. Der Bot meldet sich per Gateway (op 4) im Sprachkanal an,
+  erhält einen LiveKit-Grant (`VOICE_SERVER_UPDATE`) und veröffentlicht einen Opus-Audiotrack über `@fluxerjs/voice`.
+  Das ist mit Fake-Verbindungen getestet und lädt im Container, **wurde aber noch nie gegen eine echte Instanz
+  ausgeführt**.
+- `play <suche | YouTube-Link | Playlist-Link>`. YouTube kommt über yt-dlp direkt als WebM/Opus (kein ffmpeg nötig).
+- `play jf: <suche>` oder `jellyfin <suche>` spielt vom Jellyfin-Server (Titel, Alben, Playlists; Auswahl 1️⃣–5️⃣).
+  Jellyfin transkodiert serverseitig nach WebM/Opus (`/Audio/{id}/universal`, **Annahme:** Jellyfin 10.8+).
+- `search <suche>` (YouTube mit Auswahl), `queue`, `np`, `skip`, `remove <nr>`, `volume [0–200]`,
+  `stop` (= verlassen).
+- Ist der Bot allein im Kanal oder die Warteschlange leer, verlässt er ihn nach `musicset idle` Sekunden
+  (Standard 120).
+- `musicset status` prüft yt-dlp, Jellyfin und die Sprachverbindung.
+- Phase 5 (`audio`) baut darauf auf: Wiederholen, Mischen und Playlists sind im Player schon vorbereitet.
+
 ## Cog-Status
 
-Legende: ✅ fertig · ⏳ geplant · ⚠️ geplant, aber von Fluxer-Fähigkeiten abhängig (ggf. Stub)
+Legende: ✅ fertig · ⏳ geplant · ⚠️ fertig, aber von Fluxer-Fähigkeiten abhängig bzw. experimentell
 
 | Cog | Phase | Status | Hinweis |
 |---|---|---|---|
@@ -731,13 +839,13 @@ Legende: ✅ fertig · ⏳ geplant · ⚠️ geplant, aber von Fluxer-Fähigkeit
 | streams | 3 | ✅ | Twitch (Key), YouTube-Videos ohne Key |
 | image | 3 | ✅ | Imgur/GIPHY (Key), Tiere ohne Key |
 | instadl | 3 | ✅ | per yt-dlp, ggf. Cookies nötig |
-| afkchannel | 4 | ⏳ | Voice-State-Events ✅, Verschieben angenommen ✅ |
-| untis | 4 | ⏳ | AES-256-GCM, Zugangsdaten nur per DM |
-| animewatch | 4 | ⏳ | AniList (ohne Key) + TMDB (Key) |
-| dailystats | 4 | ⏳ | nur Zähler, Opt-out |
-| birthday | 4 | ⏳ | |
-| gameblacklist | 4 | ⚠️ | braucht Spiel-Aktivitäten in PRESENCE_UPDATE (unverifiziert) |
-| jellyfinmusic | 4 | ⚠️ | braucht Bot-Audio (LiveKit), siehe unten |
+| afkchannel | 4 | ✅ | Verzögerung, Ausnahmen, Zurückverschieben |
+| untis | 4 | ✅ | AES-256-GCM, Änderungs-Check (gegen echtes WebUntis ungetestet) |
+| animewatch | 4 | ✅ | AniList ohne Key, TMDB mit Key |
+| dailystats | 4 | ✅ | nur Zähler, Wrapped mit Awards, Opt-out |
+| birthday | 4 | ✅ | Rolle 24 h, Vorab-Erinnerung |
+| gameblacklist | 4 | ⚠️ | umgesetzt; greift nur, wenn Fluxer Spiel-Aktivitäten liefert (`gameblacklist status`) |
+| jellyfinmusic | 4 | ⚠️ | umgesetzt über LiveKit (@fluxerjs/voice), gegen echte Instanz ungetestet |
 | audio | 5 | ⚠️ | wie jellyfinmusic |
 
 Zusammen sind das die 39 Cogs deines Red-Bots (15 + 15 + 7 + audio + downloader) plus `core` und `example`.
@@ -762,8 +870,8 @@ als *Annahme* markiert.
 | Voice-State-Updates empfangen | ja (`VOICE_STATE_UPDATE` mit `self_deaf`, `self_mute`, `channel_id`) | Cache + Event mit vorherigem Zustand |
 | Mitglieder verschieben | **Annahme:** `PATCH /guilds/{id}/members/{user}` mit `channel_id` (wie Discord; @fluxerjs unterstützt das Feld) | `platform.moveMember()`; Recht „Mitglieder verschieben“ |
 | Timeout | `communication_disabled_until` (+ `timeout_reason`) beim Member-PATCH | `platform.timeoutMember()` |
-| Audio senden | Fluxer nutzt **LiveKit**: Voice-State (op 4) → `VOICE_SERVER_UPDATE`-Grant (600 s) → LiveKit-Protokoll. Es gibt `@fluxerjs/voice`, ob es mit deiner Instanz funktioniert, ist **ungetestet** | Im Kern ein Stub (`VoiceUnsupportedError` mit klarer Meldung). Wird in Phase 4/5 geprüft |
-| Presence/Aktivitäten | `PRESENCE_UPDATE` hat ein `activities`-Feld; **ob Fluxer-Clients laufende Spiele melden, ist unklar** (Fluxer setzt auf Custom Status) | Presences werden gecacht; gameblacklist ggf. als Stub |
+| Audio senden | Fluxer nutzt **LiveKit**: Voice-State (op 4, mit `mutation_id`) → `VOICE_SERVER_UPDATE` (endpoint, token, connection_id) bzw. `VOICE_STATE_ACK` bei Ablehnung → LiveKit-Raum | **Experimentell umgesetzt** (`src/platform/voiceService.ts` + `LiveKitRtcConnection` aus `@fluxerjs/voice`): Handshake getestet, natives LiveKit-Modul lädt im Container. Gegen eine echte Instanz **ungetestet**; Fehler kommen als klare Meldung |
+| Presence/Aktivitäten | `PRESENCE_UPDATE` hat ein `activities`-Feld; **ob Fluxer-Clients laufende Spiele melden, ist unklar** (Fluxer setzt auf Custom Status) | gameblacklist ist umgesetzt und zeigt mit `gameblacklist status`, ob Aktivitäten ankommen |
 | Embeds | Discord-kompatibles Format (`rich`) | mit Text-Fallback |
 | Nachrichtenlänge | **Annahme:** 2000 Zeichen | lange Texte werden automatisch geteilt |
 | Audit-Log-Grund | **Annahme:** Header `X-Audit-Log-Reason` | – |
@@ -810,6 +918,11 @@ Die Tests (`tests/`) decken ab:
   deutsche Zeitangaben, YouTube-RSS, Instagram-Links, Ticket-Protokoll; Ende-zu-Ende: Zahltag/Überweisung,
   eigene Befehle mit Alias-Vorrang, Begrüßung, Vorschlag annehmen, Ticket öffnen/schließen mit Upload, XP → Level →
   Auto-Abzeichen, komplette Trivia-Runde, Bingo, Event-Anmeldung per Reaktion, Instagram-Download (mit Fake-yt-dlp)
+- **Phase 4:** AFK-Logik, Geburtstage (inkl. 29.2.), Spielerkennung, Emoji-Zählung, AES-256-GCM (inkl. Manipulation),
+  Stundenplan-Änderungserkennung, Fortschritts-Parser, Jellyfin-URL; **Voice-Handshake** (op 4 → VOICE_SERVER_UPDATE →
+  LiveKit, Ablehnung, Timeout); Ende-zu-Ende: AFK-Verschieben und Zurückverschieben, Geburtstagspost mit Rolle,
+  Blacklist-Timeout, Statistik/Wrapped/Opt-out, Schutz von Zugangsdaten in Kanälen, Watchlist mit gefälschter AniList
+  und Folgen-Benachrichtigung, Musik-Wiedergabe mit Fake-LiveKit; alle ≥ 39 Cogs gemeinsam ohne Konflikte
 
 ---
 

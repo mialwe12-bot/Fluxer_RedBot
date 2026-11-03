@@ -1,0 +1,9 @@
+{
+  "name": "untis",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "WebUntis-Stundenplan: heute, morgen, Woche – und automatische Benachrichtigung bei Entfall, Vertretung, Raum-, Lehrer- und Zeitänderungen.",
+  "displayName": "WebUntis",
+  "npmDependencies": {},
+  "endUserData": "Speichert WebUntis-Server, Schule, Benutzername und Passwort – das Passwort verschlüsselt (AES-256-GCM). Dazu den letzten Stand des Stundenplans für den Änderungsvergleich. Löschen mit `untis forget`."
+}
