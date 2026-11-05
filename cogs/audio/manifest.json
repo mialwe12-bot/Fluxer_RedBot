@@ -1,0 +1,9 @@
+{
+  "name": "audio",
+  "version": "1.0.0",
+  "author": "fluxer-redbot",
+  "description": "Erweiterte Musiksteuerung wie Reds Audio: Playlists, Wiederholen, Mischen, Warteschlange verschieben/leeren, Verlauf, DJ-Rolle, Abstimmung zum Überspringen, Limits und Jukebox.",
+  "displayName": "Audio",
+  "dependencies": ["jellyfinmusic"],
+  "endUserData": "Speichert Server-Playlists mit der Benutzer-ID der erstellenden Person."
+}

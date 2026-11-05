@@ -58,7 +58,9 @@
       "description": "Aktualisiert installierte Cogs und lädt geladene neu.",
       "unchanged": "`{cog}` ist aktuell.",
       "done": "`{cog}` auf {version} aktualisiert.",
-      "reloaded": "`{cog}` auf {version} aktualisiert und neu geladen."
+      "reloaded": "`{cog}` auf {version} aktualisiert und neu geladen.",
+      "available": "`{cog}`: neue Version {version} verfügbar.",
+      "pinned": "`{cog}` ist angeheftet – übersprungen."
     },
     "list": {
       "description": "Installierte Cogs oder Cogs eines Repositories auflisten.",
@@ -72,6 +74,53 @@
       "author": "Autor",
       "dependencies": "Abhängigkeiten",
       "endUserData": "Gespeicherte Nutzerdaten"
+    },
+    "check": {
+      "description": "Prüft auf Updates, ohne etwas zu installieren.",
+      "none": "Alle installierten Cogs sind aktuell.",
+      "hint": "Installieren mit `{prefix}cog update`."
+    },
+    "pin": {
+      "description": "Cogs anheften (werden von Updates übersprungen).",
+      "done": "Angeheftet: {cogs}"
+    },
+    "unpin": {
+      "description": "Cogs wieder für Updates freigeben.",
+      "done": "Nicht mehr angeheftet: {cogs}"
+    },
+    "listpinned": {
+      "description": "Angeheftete Cogs anzeigen.",
+      "none": "Keine Cogs angeheftet."
+    },
+    "installversion": {
+      "description": "Bestimmte Version (Tag, Branch oder Commit) eines Cogs installieren – wird automatisch angeheftet.",
+      "revision": "Tag, Branch oder Commit",
+      "badRev": "Ungültige Revision.",
+      "pinnedNote": "📌 Die Cogs sind jetzt auf diese Version angeheftet – zurück zur neuesten mit `{prefix}cog unpin` und `{prefix}cog update`."
     }
+  },
+  "findcog": {
+    "description": "Zeigt, aus welchem Cog und welcher Quelle ein Befehl stammt.",
+    "option": "Befehl",
+    "notFound": "Diesen Befehl gibt es nicht.",
+    "source": "Quelle",
+    "core": "Kern",
+    "builtin": "mitgeliefert",
+    "author": "Autor"
+  },
+  "settings": {
+    "description": "Einstellungen des Downloaders.",
+    "show": "Automatische Update-Prüfung: {auto}\nAutomatisch installieren: {install}",
+    "every": "alle {hours} Stunden",
+    "off": "aus",
+    "autoupdate": "Alle X Stunden auf Updates prüfen und die Owner per DM informieren (0 = aus).",
+    "hours": "Stunden (0 = aus)",
+    "autoinstall": "Gefundene Updates automatisch installieren und neu laden.",
+    "autoinstallWarn": "⚠️ Updates werden jetzt automatisch installiert – fremder Code läuft dann ohne deine Prüfung. Angeheftete Cogs bleiben unberührt."
+  },
+  "auto": {
+    "available": "Neue Cog-Versionen verfügbar:",
+    "installed": "Cogs automatisch aktualisiert:",
+    "hint": "Installieren mit `cog update`."
   }
 }

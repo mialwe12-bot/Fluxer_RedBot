@@ -1,0 +1,57 @@
+{
+  "noMusic": "Der Cog jellyfinmusic ist nicht geladen.",
+  "joinVoice": "Geh zuerst in einen Sprachkanal.",
+  "emptyQueue": "Die Warteschlange ist leer.",
+  "noSuchTrack": "Diese Position gibt es nicht.",
+  "badDuration": "Ungültige Dauer – z. B. 10m oder 0.",
+  "needEconomy": "Gespeichert – damit Titel etwas kosten, muss der Cog economy geladen sein.",
+  "guard": {
+    "djOnly": "🎧 Das dürfen nur DJs.",
+    "maxQueue": "Die Warteschlange ist voll (max. {max} Titel).",
+    "maxLength": "Titel dürfen höchstens {max} lang sein.",
+    "jukeboxPoor": "🪙 Jukebox: Das kostet {price} – dafür reicht dein Guthaben nicht."
+  },
+  "repeat": {
+    "off": "🔁 Wiederholen aus.",
+    "track": "🔂 Der aktuelle Titel wird wiederholt.",
+    "queue": "🔁 Die ganze Warteschlange wird wiederholt."
+  },
+  "shuffled": "🔀 {count} Titel gemischt.",
+  "moved": "**{title}** steht jetzt auf Position {pos}.",
+  "cleared": {
+    "one": "{count} Titel aus der Warteschlange entfernt.",
+    "other": "{count} Titel aus der Warteschlange entfernt."
+  },
+  "noHistory": "Noch nichts gespielt.",
+  "historyTitle": "🕘 Zuletzt gespielt",
+  "pl": {
+    "notFound": "Die Playlist `{name}` gibt es nicht.",
+    "notYours": "Nur wer die Playlist erstellt hat oder DJs dürfen sie ändern.",
+    "tooLong": "Playlists dürfen höchstens {max} Titel haben.",
+    "badName": "Playlist-Namen: Buchstaben, Zahlen, - und _ (max. 40 Zeichen).",
+    "exists": "Die Playlist `{name}` gibt es schon.",
+    "empty": "Die Playlist ist leer.",
+    "queued": "▶️ Playlist **{name}**: {count} Titel in die Warteschlange.",
+    "saved": "💾 Playlist **{name}** mit {count} Titeln gespeichert.",
+    "created": "Playlist **{name}** angelegt – füge Titel hinzu mit `{prefix}playlist append {name} <suche>`.",
+    "appendedOne": "➕ **{title}** zu **{name}** hinzugefügt.",
+    "appended": "➕ {count} Titel zu **{name}** hinzugefügt.",
+    "removedTrack": "**{title}** aus der Playlist entfernt.",
+    "showHead": "Von {author} · {count} Titel · {time} · geändert {updated}",
+    "none": "Noch keine Playlists – `{prefix}playlist create <name>` oder `{prefix}playlist save <name>`.",
+    "listTitle": "🎶 Playlists",
+    "tracks": "Titel",
+    "deleteConfirm": "Playlist **{name}** wirklich löschen?",
+    "deleted": "Playlist **{name}** gelöscht."
+  },
+  "settingsTitle": "Audio-Einstellungen",
+  "settingsFooter": "Mods/Admins zählen immer als DJ.",
+  "s": {
+    "dj": "DJ-Rolle",
+    "everyone": "alle",
+    "voteSkip": "Abstimmung zum Überspringen",
+    "maxQueue": "Max. Warteschlange",
+    "maxLength": "Max. Titellänge",
+    "jukebox": "Jukebox-Preis"
+  }
+}

@@ -32,12 +32,33 @@ export interface MusicApi {
   enqueue(guildId: string, voiceChannelId: string, textChannelId: string, tracks: Track[]): Promise<number>;
   queue(guildId: string): Track[];
   current(guildId: string): Track | null;
+  history(guildId: string): Track[];
+  loop(guildId: string): LoopMode;
   setLoop(guildId: string, mode: LoopMode): void;
   shuffle(guildId: string): void;
+  /** Titel in der Warteschlange verschieben (1-basiert). */
+  move(guildId: string, from: number, to: number): Track | null;
+  clear(guildId: string): number;
   skip(guildId: string): void;
   stop(guildId: string): void;
   resolveQuery(query: string, requester: string): Promise<Track[]>;
+  /** Regel für Befehle (DJ-Rolle, Limits, Jukebox …). Liefert eine Funktion zum Entfernen. */
+  addGuard(guard: MusicGuard): () => void;
 }
+
+export type MusicAction = 'enqueue' | 'skip' | 'stop' | 'remove' | 'volume' | 'control';
+export interface GuardInfo {
+  guildId: string;
+  userId: string;
+  action: MusicAction;
+  tracks?: Track[];
+  queueLength: number;
+}
+/**
+ * Rückgabe: null = erlaubt, Text = verweigert (Text wird angezeigt),
+ * 'vote' = (nur bei skip) Abstimmung der Zuhörer statt direktem Überspringen.
+ */
+export type MusicGuard = (info: GuardInfo) => Promise<string | 'vote' | null> | string | 'vote' | null;
 
 /** Jellyfin-Universal-Stream, serverseitig nach WebM/Opus transkodiert (Annahme: Jellyfin 10.8+). */
 export function jellyfinStreamUrl(base: string, itemId: string, apiKey: string, userId?: string): string {
@@ -75,6 +96,8 @@ interface Player {
   skipCtl: AbortController | null;
   child: ReturnType<typeof spawn> | null;
   idleTimer: NodeJS.Timeout | null;
+  history: Track[];
+  votes: Set<string>;
 }
 
 export default defineCog({
@@ -231,6 +254,9 @@ export default defineCog({
           } finally {
             killChild(pl);
           }
+          pl.history.unshift(track);
+          pl.history.length = Math.min(pl.history.length, 20);
+          pl.votes.clear();
           if (pl.loop === 'track' && !pl.skipCtl.signal.aborted) pl.queue.unshift(track);
           else if (pl.loop === 'queue') pl.queue.push(track);
         }
@@ -258,7 +284,7 @@ export default defineCog({
     async function enqueue(guildId: string, voiceChannelId: string, textChannelId: string, tracks: Track[]): Promise<number> {
       let pl = players.get(guildId);
       if (!pl) {
-        pl = { guildId, voiceChannelId, textChannelId, queue: [], current: null, loop: 'off', running: false, skipCtl: null, child: null, idleTimer: null };
+        pl = { guildId, voiceChannelId, textChannelId, queue: [], current: null, loop: 'off', running: false, skipCtl: null, child: null, idleTimer: null, history: [], votes: new Set() };
         players.set(guildId, pl);
       }
       pl.textChannelId = textChannelId;
@@ -267,10 +293,41 @@ export default defineCog({
       return pl.queue.length;
     }
 
+    const guards = new Set<MusicGuard>();
+    /** Alle Regeln prüfen; der erste Einwand gewinnt. */
+    async function checkGuards(info: GuardInfo): Promise<string | 'vote' | null> {
+      let vote = false;
+      for (const guard of guards) {
+        const r = await guard(info);
+        if (r === 'vote') vote = true;
+        else if (r) return r;
+      }
+      return vote ? 'vote' : null;
+    }
+
     const api: MusicApi = {
       enqueue,
       queue: (g) => [...(players.get(g)?.queue ?? [])],
       current: (g) => players.get(g)?.current ?? null,
+      history: (g) => [...(players.get(g)?.history ?? [])],
+      loop: (g) => players.get(g)?.loop ?? 'off',
+      move: (g, from, to) => {
+        const pl = players.get(g);
+        if (!pl || from < 1 || from > pl.queue.length) return null;
+        const [t] = pl.queue.splice(from - 1, 1);
+        pl.queue.splice(Math.max(0, Math.min(pl.queue.length, to - 1)), 0, t!);
+        return t!;
+      },
+      clear: (g) => {
+        const pl = players.get(g);
+        const n = pl?.queue.length ?? 0;
+        if (pl) pl.queue = [];
+        return n;
+      },
+      addGuard: (guard) => {
+        guards.add(guard);
+        return () => guards.delete(guard);
+      },
       setLoop: (g, mode) => {
         const pl = players.get(g);
         if (pl) pl.loop = mode;
@@ -343,6 +400,14 @@ export default defineCog({
     };
     const voicePerms = { level: 'everyone', bot: ['Connect', 'Speak'] } as const;
 
+    /** Regeln anderer Cogs (z. B. audio) prüfen; wirft bei Verweigerung. */
+    const guard = async (ctx: CommandContext, action: MusicAction, tracks?: Track[]): Promise<'vote' | null> => {
+      const r = await checkGuards({ guildId: ctx.guildId!, userId: ctx.author.id, action, tracks, queueLength: players.get(ctx.guildId!)?.queue.length ?? 0 });
+      if (r === 'vote') return action === 'skip' ? 'vote' : null;
+      if (r) throw new UserError(r);
+      return null;
+    };
+
     cog.command({
       name: 'play',
       description: 'Spielt Musik: YouTube-Suche/-Link, Playlist oder "jf: <suche>" für Jellyfin.',
@@ -356,6 +421,7 @@ export default defineCog({
         await ctx.typing();
         const tracks = await resolveQuery(ctx.arg<string>('suche'), ctx.author.id);
         const wasRunning = players.get(ctx.guildId!)?.running ?? false;
+        await guard(ctx, 'enqueue', tracks);
         await enqueue(ctx.guildId!, vc, ctx.channelId, tracks);
         if (tracks.length > 1) await ctx.reply(ctx.t('addedMany', { count: tracks.length }));
         else if (wasRunning) await ctx.reply(ctx.t('added', { title: tracks[0]!.title, pos: players.get(ctx.guildId!)!.queue.length }));
@@ -380,6 +446,7 @@ export default defineCog({
         if (idx === null) return ctx.reply(ctx.t('common.cancelled'));
         const tracks = await jellyfinTracks(items[idx]!, ctx.author.id);
         if (!tracks.length) throw new UserError(ctx.t('noHits'));
+        await guard(ctx, 'enqueue', tracks);
         await enqueue(ctx.guildId!, vc, ctx.channelId, tracks);
         await ctx.reply(tracks.length > 1 ? ctx.t('addedMany', { count: tracks.length }) : ctx.t('added', { title: tracks[0]!.title, pos: players.get(ctx.guildId!)!.queue.length }));
       },
@@ -401,7 +468,9 @@ export default defineCog({
         const idx = await ctx.choose(embed({ title: ctx.t('chooseTitle'), description: list }), hits.length);
         if (idx === null) return ctx.reply(ctx.t('common.cancelled'));
         const h = hits[idx]!;
-        await enqueue(ctx.guildId!, vc, ctx.channelId, [{ title: h.title, source: 'youtube', ref: `https://www.youtube.com/watch?v=${h.id}`, duration: h.duration, requester: ctx.author.id }]);
+        const picked: Track[] = [{ title: h.title, source: 'youtube', ref: `https://www.youtube.com/watch?v=${h.id}`, duration: h.duration, requester: ctx.author.id }];
+        await guard(ctx, 'enqueue', picked);
+        await enqueue(ctx.guildId!, vc, ctx.channelId, picked);
         await ctx.tick();
       },
     });
@@ -440,7 +509,17 @@ export default defineCog({
       guildOnly: true,
       run: async (ctx) => {
         userVoice(ctx);
-        requirePlayer(ctx);
+        const pl = requirePlayer(ctx);
+        // Wer den Titel gewünscht hat, darf ihn immer überspringen.
+        if (pl.current?.requester !== ctx.author.id && (await guard(ctx, 'skip')) === 'vote') {
+          const guild = p().getGuild(ctx.guildId!);
+          const listeners = [...(guild?.voiceStates.values() ?? [])].filter(
+            (s) => s.channel_id === pl.voiceChannelId && s.user_id !== p().user?.id && !(guild?.members.get(s.user_id)?.user as { bot?: boolean } | undefined)?.bot,
+          ).length;
+          pl.votes.add(ctx.author.id);
+          const needed = Math.max(1, Math.ceil(listeners / 2));
+          if (pl.votes.size < needed) return ctx.reply(ctx.t('voteAdded', { votes: pl.votes.size, needed }));
+        }
         api.skip(ctx.guildId!);
         await ctx.react('⏭️');
       },
@@ -453,6 +532,8 @@ export default defineCog({
       options: [{ name: 'nummer', description: 'Position', type: OptionType.Integer, required: true, min_value: 1 }],
       run: async (ctx) => {
         const pl = requirePlayer(ctx);
+        const target = pl.queue[ctx.arg<number>('nummer') - 1];
+        if (target && target.requester !== ctx.author.id) await guard(ctx, 'remove');
         const [t] = pl.queue.splice(ctx.arg<number>('nummer') - 1, 1);
         if (!t) throw new UserError(ctx.t('noSuchTrack'));
         await ctx.reply(ctx.t('removedTrack', { title: t.title }));
@@ -465,6 +546,7 @@ export default defineCog({
       aliases: ['leave', 'disconnect', 'dc'],
       guildOnly: true,
       run: async (ctx) => {
+        await guard(ctx, 'stop');
         destroy(ctx.guildId!);
         await ctx.react('⏹️');
       },
@@ -479,6 +561,7 @@ export default defineCog({
       run: async (ctx) => {
         const v = ctx.arg<number | undefined>('prozent');
         if (v === undefined) return ctx.reply(ctx.t('volumeIs', { volume: cog.config.guild(ctx.guildId!).get<number>('volume') }));
+        await guard(ctx, 'volume');
         cog.config.guild(ctx.guildId!).set('volume', v);
         cog.bot.voice.get(ctx.guildId!)?.conn.setVolume(v);
         await ctx.reply(ctx.t('volumeSet', { volume: v }));

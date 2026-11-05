@@ -10,7 +10,7 @@ Ein modularer Bot für die Chat-Plattform **Fluxer**, gebaut nach dem Vorbild vo
 - Befehle intern im Slash-Command-Format, damit sich native Slash-Commands später ergänzen lassen
 - Docker (multi-stage, non-root), Healthcheck, Watchdog, Auto-Reconnect, Zeitzone Europe/Berlin
 
-> **Stand:** Phasen 1–4 sind fertig (Kern, Moderation, Community, Spezial-Cogs). Phase 5 (audio, Downloader-Erweiterungen) folgt, siehe [Cog-Status](#cog-status).
+> **Stand:** Alle fünf Phasen sind fertig: Kern, Moderation, Community, Spezial-Cogs, Audio und Downloader-Erweiterungen. Übersicht im [Cog-Status](#cog-status).
 
 ---
 
@@ -82,7 +82,8 @@ fluxer-redbot/
 │       inviteblocklist/ reports/ roletools/ alias/ admin/ extendedmodlog/   # Phase 2
 │   ├── economy/ levelup/ badges/ general/ customcom/ welcome/ suggestions/ tickets/
 │       trivia/ (inkl. lists/*.json) bingo/ conversions/ eventposter/ streams/ image/ instadl/   # Phase 3
-│   └── afkchannel/ untis/ animewatch/ dailystats/ birthday/ gameblacklist/ jellyfinmusic/   # Phase 4
+│   ├── afkchannel/ untis/ animewatch/ dailystats/ birthday/ gameblacklist/ jellyfinmusic/   # Phase 4
+│   └── audio/                                                                        # Phase 5
 └── tests/                      # Vitest: Loader, Config-API, Rechte, Parser, Dispatcher, Phase-2-Cogs
 ```
 
@@ -275,6 +276,22 @@ Das Ziel ist ein Cog-Name oder ein Befehl; mit `cog:`/`cmd:` lässt es sich eind
 - Wie bei Red gibt es eine einmalige Warnung: Fremde Cogs sind Code mit vollen Rechten.
 - Für SSH-URLs braucht der Container einen Schlüssel (z. B. `~/.ssh` als Volume für User `node` einbinden).
   Mit HTTPS und Token ist das einfacher.
+
+**Erweiterungen (Phase 5):**
+
+```
+!cog checkforupdates           nur prüfen, nichts installieren
+!cog pin untis afkchannel      anheften: werden von Updates übersprungen
+!cog unpin untis | !cog listpinned
+!cog installversion meine v1.2.0 untis   bestimmte Version (Tag, Branch oder Commit) – wird automatisch angeheftet
+!findcog <befehl>              aus welchem Cog/Repo/Commit ein Befehl stammt
+!downloaderset autoupdate 12   alle 12 Stunden prüfen und neue Versionen einmalig per DM an die Owner melden
+!downloaderset autoinstall an  gefundene Updates automatisch installieren und neu laden (Vorsicht: fremder Code)
+```
+
+`installversion` holt die Revision per `git fetch --depth 1` und `git archive`. Commit-Hashes funktionieren nur,
+wenn der Git-Server das Abrufen einzelner Commits erlaubt; GitHub und Forgejo tun das in der Regel. Tags und
+Branches gehen immer.
 
 ---
 
@@ -800,6 +817,28 @@ Bank wie bei Red: pro Server, oder mit `bank setglobal an` (Owner) eine gemeinsa
 - `musicset status` prüft yt-dlp, Jellyfin und die Sprachverbindung.
 - Phase 5 (`audio`) baut darauf auf: Wiederholen, Mischen und Playlists sind im Player schon vorbereitet.
 
+### audio
+
+Erweiterte Musiksteuerung wie bei Reds Audio. Baut auf dem Player von `jellyfinmusic` auf, wird automatisch mitgeladen.
+
+- **Playlists** (pro Server):
+  - `playlist create <name>`, `playlist append <name> <suche | YouTube-Link | Playlist-Link | jf: …>`
+  - `playlist save <name>` speichert den aktuellen Titel und die Warteschlange.
+  - `playlist play <name> [gemischt]`, `playlist show|list|remove <name> <nr>|rename|delete`
+  - Ändern dürfen nur die Person, die die Playlist erstellt hat, sowie DJs und Mods.
+- **Steuerung:** `repeat aus|titel|liste`, `shuffle`, `move <von> <nach>`, `clearqueue`, `history`. Dazu aus
+  jellyfinmusic: `play`, `queue`, `skip`, `stop`, `volume`, `np`, `remove`.
+- **Regeln** (`audioset`):
+  - `dj @rolle`: Nur DJs, Mods und Admins dürfen stop, volume, repeat, shuffle, move, clearqueue sowie fremde Titel
+    entfernen.
+  - `voteskip an`: Andere stimmen zum Überspringen ab; nötig ist die Mehrheit der Zuhörenden. Wer einen Titel gewünscht
+    hat, darf ihn immer überspringen.
+  - `maxqueue <n>`, `maxlength <dauer>`: Limits; DJs und Mods sind ausgenommen.
+  - `jukebox <preis>`: Jeder Titel kostet Guthaben aus `economy`; DJs und Mods spielen kostenlos.
+    **Abweichung:** `playlist play` kostet nichts.
+- Technisch hängen sich die Regeln über `MusicApi.addGuard()` in den Player. Pausieren/Fortsetzen gibt es nicht,
+  weil die LiveKit-Wiedergabe von `@fluxerjs/voice` das nicht unterstützt.
+
 ## Cog-Status
 
 Legende: ✅ fertig · ⏳ geplant · ⚠️ fertig, aber von Fluxer-Fähigkeiten abhängig bzw. experimentell
@@ -809,7 +848,7 @@ Legende: ✅ fertig · ⏳ geplant · ⚠️ fertig, aber von Fluxer-Fähigkeite
 | **core** (Kern) | 1 | ✅ | load/unload/reload/cogs/help/ping/info/uptime/prefix/set/shutdown/restart/owner |
 | **example** | 1 | ✅ | Beispiel/Vorlage (hello, echo, Menüs, Task) |
 | **permissions** | 1 (vorgezogen aus 2) | ✅ | Regeln pro Befehl/Cog |
-| **downloader** | 1 (Erweiterungen in 5) | ✅ | Repos, install/update/uninstall |
+| **downloader** | 1 + 5 | ✅ | Repos, install/update/uninstall; Phase 5: checkforupdates, pin, installversion, findcog, Auto-Update |
 | admin | 2 | ✅ |  |
 | alias | 2 | ✅ |  |
 | mod (kick/ban/unban/timeout) | 2 | ✅ | tempban, softban, rename, slowmode, voicekick, userinfo |
@@ -846,7 +885,7 @@ Legende: ✅ fertig · ⏳ geplant · ⚠️ fertig, aber von Fluxer-Fähigkeite
 | birthday | 4 | ✅ | Rolle 24 h, Vorab-Erinnerung |
 | gameblacklist | 4 | ⚠️ | umgesetzt; greift nur, wenn Fluxer Spiel-Aktivitäten liefert (`gameblacklist status`) |
 | jellyfinmusic | 4 | ⚠️ | umgesetzt über LiveKit (@fluxerjs/voice), gegen echte Instanz ungetestet |
-| audio | 5 | ⚠️ | wie jellyfinmusic |
+| audio | 5 | ⚠️ | Playlists, Repeat, Shuffle, DJ-Rolle, Vote-Skip, Limits, Jukebox – Audio experimentell wie jellyfinmusic |
 
 Zusammen sind das die 39 Cogs deines Red-Bots (15 + 15 + 7 + audio + downloader) plus `core` und `example`.
 
@@ -923,6 +962,9 @@ Die Tests (`tests/`) decken ab:
   LiveKit, Ablehnung, Timeout); Ende-zu-Ende: AFK-Verschieben und Zurückverschieben, Geburtstagspost mit Rolle,
   Blacklist-Timeout, Statistik/Wrapped/Opt-out, Schutz von Zugangsdaten in Kanälen, Watchlist mit gefälschter AniList
   und Folgen-Benachrichtigung, Musik-Wiedergabe mit Fake-LiveKit; alle ≥ 39 Cogs gemeinsam ohne Konflikte
+- **Phase 5:** Audio-Regeln (DJ, Abstimmung, Limits, Jukebox), Playlists anlegen/abspielen, repeat/shuffle/move;
+  Downloader mit **echtem Git-Repository**: installieren, Update prüfen und installieren, anheften,
+  bestimmte Version (Tag), findcog, automatische Prüfung mit einmaliger DM
 
 ---
 

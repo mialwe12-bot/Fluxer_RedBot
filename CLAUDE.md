@@ -29,7 +29,7 @@ Modularer Fluxer-Bot nach Red-DiscordBot-Vorbild. Alle Bot-Texte, das README und
 2. admin, alias, mod, modlog, extendedmodlog, mutes, warnings, automod, filter, retrigger, inviteblocklist, cleanup, reports, roletools ✅
 3. general, customcom, welcome, suggestions, tickets, levelup, badges, economy, trivia, bingo, conversions, eventposter, streams, image, instadl ✅
 4. afkchannel, untis, animewatch, dailystats, birthday, gameblacklist, jellyfinmusic ✅
-5. audio, Downloader-Erweiterungen
+5. audio, Downloader-Erweiterungen ✅
 
 Nach jeder Phase fragt Claude, ob es weitergeht.
 
@@ -51,6 +51,12 @@ Nach jeder Phase fragt Claude, ob es weitergeht.
 - untis: Schlüssel UNTIS_ENCRYPTION_KEY (hex/base64, 32 Byte); `untis login` in Servern wird immer gelöscht (Listener)
 - dailystats/levelup zählen keine Befehle (Prefix-Nachrichten)
 - Tests: Fake-LiveKit (`FakeRtc`), `globalThis.fetch` für AniList fälschen, `scheduler.runNow`
+
+## Konventionen (Phase 5)
+- Musik-Regeln: `MusicApi.addGuard(guard)` (jellyfinmusic) → audio registriert DJ/Vote-Skip/Limits/Jukebox; Rückgabe null | Text | 'vote'
+- audio `roleOf`: privileged (Mod/DJ-Rolle: keine Limits/Kosten, fremde Playlists ändern) vs. control (darf steuern; ohne DJ-Rolle und ohne Vote-Skip alle)
+- Downloader: `runUpdates(names, install)`, `installVersion` (fetch --depth 1 + git archive + tar), pinned/revision in InstalledEntry, Auto-Update-Task meldet je Hash einmal
+- Tests: `tests/phase5.test.ts` nutzt ein echtes lokales Git-Repo
 
 ## Befehle
 - `npm test`, `npm run typecheck`, `npm run build`

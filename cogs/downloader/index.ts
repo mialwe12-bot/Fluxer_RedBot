@@ -28,6 +28,24 @@ interface InstalledEntry {
   commit: string;
   hash: string;
   installedAt: string;
+  /** Angeheftet: wird von Updates übersprungen. */
+  pinned?: boolean;
+  /** Mit installversion installierte Revision (Tag/Branch/Commit). */
+  revision?: string | null;
+}
+
+export type UpdateStatus = 'unchanged' | 'available' | 'updated' | 'reloaded' | 'pinned' | 'error';
+export interface UpdateResult {
+  name: string;
+  status: UpdateStatus;
+  version?: string;
+  hash?: string;
+  error?: string;
+}
+
+/** Revisionen: Branch-, Tag-Namen oder Commit-Hashes – keine Optionen oder Pfad-Tricks. */
+export function isSafeRevision(rev: string): boolean {
+  return /^[\w][\w./-]{0,99}$/.test(rev) && !rev.includes('..');
 }
 
 const REPO_NAME_RE = /^[a-z0-9][a-z0-9_-]{0,39}$/i;
@@ -117,6 +135,10 @@ export default defineCog({
       repos: {} as Record<string, RepoEntry>,
       installed: {} as Record<string, InstalledEntry>,
       warned: false,
+      autoUpdateHours: 0,
+      autoInstall: false,
+      lastAutoCheck: 0,
+      notifiedHashes: {} as Record<string, string>,
     });
     const g = () => cog.config.global();
     const repos = () => g().get<Record<string, RepoEntry>>('repos');
@@ -174,21 +196,149 @@ export default defineCog({
       return specs;
     }
 
-    async function installCog(repoName: string, cogName: string): Promise<{ npm: string[]; overridesBuiltin: boolean }> {
-      const available = repoCogs(repoDir(repoName));
+    async function installCog(
+      repoName: string,
+      cogName: string,
+      opts: { sourceRoot?: string; commit?: string; revision?: string | null; pinned?: boolean } = {},
+    ): Promise<{ npm: string[]; overridesBuiltin: boolean; version: string }> {
+      const available = repoCogs(opts.sourceRoot ?? repoDir(repoName));
       const found = available.get(cogName);
       if (!found) throw new UserError(cog.t('cog.notInRepo', { cog: cogName, repo: repoName }));
       const builtin = cog.bot.cogs.discover().get(cogName);
       const overridesBuiltin = builtin?.source === 'builtin';
       const npm = await installNpm(found.manifest);
       copyDir(found.dir, path.join(cogsDir, cogName));
-      const commit = await git(['rev-parse', 'HEAD'], repoDir(repoName)).catch(() => '');
+      const commit = opts.commit ?? (await git(['rev-parse', 'HEAD'], repoDir(repoName)).catch(() => ''));
+      const previous = installed()[cogName];
       g().update<Record<string, InstalledEntry>>('installed', (all) => ({
         ...all,
-        [cogName]: { repo: repoName, commit, hash: dirHash(found.dir), installedAt: new Date().toISOString() },
+        [cogName]: {
+          repo: repoName,
+          commit,
+          hash: dirHash(found.dir),
+          installedAt: new Date().toISOString(),
+          pinned: opts.pinned ?? previous?.pinned ?? false,
+          revision: opts.revision ?? null,
+        },
       }));
-      return { npm, overridesBuiltin };
+      return { npm, overridesBuiltin, version: found.manifest.version };
     }
+
+    /**
+     * Prüft installierte Cogs auf Updates (Repos werden aktualisiert). Mit install=true werden
+     * Updates installiert und geladene Cogs neu geladen. Angeheftete Cogs werden übersprungen.
+     */
+    async function runUpdates(names: string[], install: boolean): Promise<UpdateResult[]> {
+      const all = installed();
+      const results: UpdateResult[] = [];
+      const updatedRepos = new Set<string>();
+      for (const name of names) {
+        const entry = all[name];
+        if (!entry) {
+          results.push({ name, status: 'error', error: cog.t('cog.notInstalled', { cog: name }) });
+          continue;
+        }
+        if (entry.pinned) {
+          results.push({ name, status: 'pinned' });
+          continue;
+        }
+        try {
+          if (!repos()[entry.repo]) throw new UserError(cog.t('repo.notFound', { name: entry.repo }));
+          if (!updatedRepos.has(entry.repo)) {
+            await updateRepo(entry.repo);
+            updatedRepos.add(entry.repo);
+          }
+          const source = repoCogs(repoDir(entry.repo)).get(name);
+          if (!source) throw new UserError(cog.t('cog.notInRepo', { cog: name, repo: entry.repo }));
+          const hash = dirHash(source.dir);
+          if (hash === entry.hash) {
+            results.push({ name, status: 'unchanged' });
+            continue;
+          }
+          if (!install) {
+            results.push({ name, status: 'available', version: source.manifest.version, hash });
+            continue;
+          }
+          await installCog(entry.repo, name);
+          if (cog.bot.cogs.isLoaded(name)) {
+            await cog.bot.cogs.reload(name);
+            results.push({ name, status: 'reloaded', version: source.manifest.version });
+          } else results.push({ name, status: 'updated', version: source.manifest.version });
+        } catch (err) {
+          const e = err as { key?: string; vars?: Record<string, string>; message: string };
+          results.push({ name, status: 'error', error: e.key ? cog.t(e.key, e.vars) : e.message });
+        }
+      }
+      return results;
+    }
+
+    const resultLine = (ctx: CommandContext | null, r: UpdateResult): string => {
+      const t = (k: string, v?: Record<string, string>) => (ctx ? ctx.t(k, v) : cog.t(k, v));
+      switch (r.status) {
+        case 'unchanged':
+          return `➖ ${t('cog.update.unchanged', { cog: r.name })}`;
+        case 'available':
+          return `🆕 ${t('cog.update.available', { cog: r.name, version: r.version ?? '?' })}`;
+        case 'updated':
+          return `✅ ${t('cog.update.done', { cog: r.name, version: r.version ?? '?' })}`;
+        case 'reloaded':
+          return `✅ ${t('cog.update.reloaded', { cog: r.name, version: r.version ?? '?' })}`;
+        case 'pinned':
+          return `📌 ${t('cog.update.pinned', { cog: r.name })}`;
+        default:
+          return `❌ **${r.name}**: ${r.error ?? '?'}`;
+      }
+    };
+
+    /** Bestimmte Revision eines Cogs aus dem Repo holen (flacher Fetch + git archive). */
+    async function installVersion(repoName: string, revision: string, cogNames: string[]): Promise<UpdateResult[]> {
+      const dir = repoDir(repoName);
+      await git(['fetch', '--depth', '1', 'origin', revision], dir);
+      const commit = await git(['rev-parse', 'FETCH_HEAD'], dir);
+      const tmp = fs.mkdtempSync(path.join(dataDir, 'tmp-rev-'));
+      const results: UpdateResult[] = [];
+      try {
+        const tar = path.join(tmp, 'rev.tar');
+        await git(['archive', '--format=tar', '-o', tar, 'FETCH_HEAD'], dir);
+        const root = path.join(tmp, 'src');
+        fs.mkdirSync(root);
+        await run('tar', ['-xf', tar, '-C', root], { timeout: 120_000 });
+        for (const name of cogNames) {
+          try {
+            const r = await installCog(repoName, name, { sourceRoot: root, commit, revision, pinned: true });
+            if (cog.bot.cogs.isLoaded(name)) await cog.bot.cogs.reload(name);
+            results.push({ name, status: cog.bot.cogs.isLoaded(name) ? 'reloaded' : 'updated', version: r.version });
+          } catch (err) {
+            results.push({ name, status: 'error', error: (err as Error).message });
+          }
+        }
+      } finally {
+        fs.rmSync(tmp, { recursive: true, force: true });
+      }
+      return results;
+    }
+
+    /** Automatische Prüfung (stündlich, je nach Einstellung). Meldet jede neue Version nur einmal. */
+    cog.schedule({
+      name: 'auto-update',
+      every: 3600,
+      run: async () => {
+        const hours = g().get<number>('autoUpdateHours');
+        if (!hours || Date.now() - g().get<number>('lastAutoCheck') < hours * 3600_000) return;
+        g().set('lastAutoCheck', Date.now());
+        const names = Object.keys(installed());
+        if (!names.length) return;
+        const install = g().get<boolean>('autoInstall');
+        const results = await runUpdates(names, install);
+        const notified = g().get<Record<string, string>>('notifiedHashes');
+        const fresh = results.filter((r) => r.status === 'reloaded' || r.status === 'updated' || r.status === 'error' || (r.status === 'available' && notified[r.name] !== r.hash));
+        for (const r of results) if (r.status === 'available' && r.hash) notified[r.name] = r.hash;
+        g().set('notifiedHashes', notified);
+        if (!fresh.length) return;
+        const text = `🔔 ${cog.t(install ? 'auto.installed' : 'auto.available')}\n${fresh.map((r) => resultLine(null, r)).join('\n')}${install ? '' : `\n${cog.t('auto.hint')}`}`;
+        for (const owner of cog.bot.owners()) await cog.platform.sendDM(owner, text.slice(0, 1990)).catch(() => undefined);
+      },
+    });
 
     /** Einmalige Warnung wie bei Red: fremder Code läuft mit vollen Rechten. */
     async function ensureWarned(ctx: CommandContext): Promise<boolean> {
@@ -387,43 +537,77 @@ export default defineCog({
           description: cog.t('cog.update.description'),
           options: [{ name: 'cogs', description: cog.t('cog.cogsOption'), type: OptionType.String, variadic: true }],
           run: async (ctx) => {
-            const all = installed();
-            const names = (ctx.arg<string[] | undefined>('cogs') ?? Object.keys(all)).map((n) => n.toLowerCase());
+            const names = (ctx.arg<string[] | undefined>('cogs') ?? Object.keys(installed())).map((n) => n.toLowerCase());
             if (!names.length) return ctx.reply(ctx.t('cog.list.noneInstalled'));
             await ctx.typing();
-            const lines: string[] = [];
-            const updatedRepos = new Set<string>();
-            for (const name of names) {
-              const entry = all[name];
-              if (!entry) {
-                lines.push(`❌ ${ctx.t('cog.notInstalled', { cog: name })}`);
-                continue;
-              }
-              try {
-                if (!repos()[entry.repo]) throw new UserError(ctx.t('repo.notFound', { name: entry.repo }));
-                if (!updatedRepos.has(entry.repo)) {
-                  await updateRepo(entry.repo);
-                  updatedRepos.add(entry.repo);
-                }
-                const source = repoCogs(repoDir(entry.repo)).get(name);
-                if (!source) throw new UserError(ctx.t('cog.notInRepo', { cog: name, repo: entry.repo }));
-                if (dirHash(source.dir) === entry.hash) {
-                  lines.push(`➖ ${ctx.t('cog.update.unchanged', { cog: name })}`);
-                  continue;
-                }
-                await installCog(entry.repo, name);
-                if (ctx.bot.cogs.isLoaded(name)) {
-                  await ctx.bot.cogs.reload(name);
-                  lines.push(`✅ ${ctx.t('cog.update.reloaded', { cog: name, version: source.manifest.version })}`);
-                } else {
-                  lines.push(`✅ ${ctx.t('cog.update.done', { cog: name, version: source.manifest.version })}`);
-                }
-              } catch (err) {
-                const e = err as { key?: string; vars?: Record<string, string>; message: string };
-                lines.push(`❌ **${name}**: ${e.key ? ctx.t(e.key, e.vars) : e.message}`);
-              }
-            }
-            await ctx.reply(lines.join('\n'));
+            const results = await runUpdates(names, true);
+            await ctx.reply(results.map((r) => resultLine(ctx, r)).join('\n'));
+          },
+        },
+        {
+          name: 'checkforupdates',
+          description: cog.t('cog.check.description'),
+          aliases: ['check'],
+          run: async (ctx) => {
+            const names = Object.keys(installed());
+            if (!names.length) return ctx.reply(ctx.t('cog.list.noneInstalled'));
+            await ctx.typing();
+            const results = await runUpdates(names, false);
+            const available = results.filter((r) => r.status === 'available');
+            const lines = results.filter((r) => r.status !== 'unchanged').map((r) => resultLine(ctx, r));
+            await ctx.reply(available.length ? `${lines.join('\n')}\n${ctx.t('cog.check.hint', { prefix: ctx.prefix })}` : [ctx.t('cog.check.none'), ...lines].join('\n'));
+          },
+        },
+        {
+          name: 'pin',
+          description: cog.t('cog.pin.description'),
+          options: [{ name: 'cogs', description: cog.t('cog.cogsOption'), type: OptionType.String, required: true, variadic: true }],
+          run: async (ctx) => {
+            const names = ctx.arg<string[]>('cogs').map((n) => n.toLowerCase());
+            const missing = names.filter((n) => !installed()[n]);
+            if (missing.length) throw new UserError(ctx.t('cog.notInstalled', { cog: missing.join(', ') }));
+            g().update<Record<string, InstalledEntry>>('installed', (all) => Object.fromEntries(Object.entries(all).map(([n, e]) => [n, names.includes(n) ? { ...e, pinned: true } : e])));
+            await ctx.reply(ctx.t('cog.pin.done', { cogs: names.map(inlineCode).join(', ') }));
+          },
+        },
+        {
+          name: 'unpin',
+          description: cog.t('cog.unpin.description'),
+          options: [{ name: 'cogs', description: cog.t('cog.cogsOption'), type: OptionType.String, required: true, variadic: true }],
+          run: async (ctx) => {
+            const names = ctx.arg<string[]>('cogs').map((n) => n.toLowerCase());
+            g().update<Record<string, InstalledEntry>>('installed', (all) =>
+              Object.fromEntries(Object.entries(all).map(([n, e]) => [n, names.includes(n) ? { ...e, pinned: false, revision: null } : e])),
+            );
+            await ctx.reply(ctx.t('cog.unpin.done', { cogs: names.map(inlineCode).join(', ') }));
+          },
+        },
+        {
+          name: 'listpinned',
+          description: cog.t('cog.listpinned.description'),
+          run: async (ctx) => {
+            const pinned = Object.entries(installed()).filter(([, e]) => e.pinned);
+            await ctx.reply(pinned.length ? pinned.map(([n, e]) => `📌 **${n}** – ${e.revision ?? e.commit.slice(0, 7)}`).join('\n') : ctx.t('cog.listpinned.none'));
+          },
+        },
+        {
+          name: 'installversion',
+          description: cog.t('cog.installversion.description'),
+          options: [
+            { name: 'repo', description: cog.t('cog.repoOption'), type: OptionType.String, required: true },
+            { name: 'revision', description: cog.t('cog.installversion.revision'), type: OptionType.String, required: true },
+            { name: 'cogs', description: cog.t('cog.cogsOption'), type: OptionType.String, required: true, variadic: true },
+          ],
+          examples: ['cog installversion meine v1.2.0 untis', 'cog installversion meine 3f2a9c1 afkchannel'],
+          run: async (ctx) => {
+            const repoName = ctx.arg<string>('repo').toLowerCase();
+            requireRepo(ctx, repoName);
+            const rev = ctx.arg<string>('revision');
+            if (!isSafeRevision(rev)) throw new UserError(ctx.t('cog.installversion.badRev'));
+            if (!(await ensureWarned(ctx))) return ctx.reply(ctx.t('common.cancelled'));
+            await ctx.typing();
+            const results = await installVersion(repoName, rev, ctx.arg<string[]>('cogs').map((n) => n.toLowerCase()));
+            await ctx.reply(`${results.map((r) => resultLine(ctx, r)).join('\n')}\n${ctx.t('cog.installversion.pinnedNote', { prefix: ctx.prefix })}`);
           },
         },
         {
@@ -473,6 +657,58 @@ export default defineCog({
                 { name: ctx.t('cog.info.endUserData'), value: m.endUserData ?? '–' },
               ],
             });
+          },
+        },
+      ],
+    });
+
+    cog.command({
+      name: 'findcog',
+      description: cog.t('findcog.description'),
+      permissions: { level: 'owner' },
+      options: [{ name: 'befehl', description: cog.t('findcog.option'), type: OptionType.String, required: true, rest: true }],
+      run: async (ctx) => {
+        const command = ctx.bot.registry.find(ctx.arg<string>('befehl'));
+        if (!command) throw new UserError(ctx.t('findcog.notFound'));
+        const loaded = ctx.bot.cogs.loaded.get(command.cogName);
+        const info = ctx.bot.cogs.discover().get(command.cogName);
+        const inst = installed()[command.cogName];
+        await ctx.sendEmbed({
+          title: `${ctx.prefix}${command.qualifiedName}`,
+          fields: [
+            { name: 'Cog', value: `${command.cogName} ${loaded?.manifest.version ?? ''}`, inline: true },
+            { name: ctx.t('findcog.source'), value: loaded?.internal ? ctx.t('findcog.core') : inst ? `${inst.repo} @ ${inst.commit.slice(0, 7)}${inst.pinned ? ' 📌' : ''}` : info?.source === 'builtin' ? ctx.t('findcog.builtin') : '–', inline: true },
+            { name: ctx.t('findcog.author'), value: [loaded?.manifest.author ?? '–'].flat().join(', '), inline: true },
+          ],
+        });
+      },
+    });
+
+    cog.group({
+      name: 'downloaderset',
+      description: cog.t('settings.description'),
+      permissions: { level: 'owner' },
+      run: async (ctx) => {
+        const hours = g().get<number>('autoUpdateHours');
+        await ctx.reply(ctx.t('settings.show', { auto: hours ? ctx.t('settings.every', { hours }) : ctx.t('settings.off'), install: g().get<boolean>('autoInstall') ? '✅' : '❌' }));
+      },
+      subcommands: [
+        {
+          name: 'autoupdate',
+          description: cog.t('settings.autoupdate'),
+          options: [{ name: 'stunden', description: cog.t('settings.hours'), type: OptionType.Integer, required: true, min_value: 0, max_value: 168 }],
+          run: async (ctx) => {
+            g().set('autoUpdateHours', ctx.arg<number>('stunden'));
+            await ctx.tick();
+          },
+        },
+        {
+          name: 'autoinstall',
+          description: cog.t('settings.autoinstall'),
+          options: [{ name: 'aktiv', description: 'an/aus', type: OptionType.Boolean, required: true }],
+          run: async (ctx) => {
+            g().set('autoInstall', ctx.arg<boolean>('aktiv'));
+            await ctx.reply(ctx.arg<boolean>('aktiv') ? ctx.t('settings.autoinstallWarn') : ctx.t('common.done'));
           },
         },
       ],

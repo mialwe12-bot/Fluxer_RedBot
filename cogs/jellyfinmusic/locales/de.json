@@ -28,5 +28,6 @@
     "noKey": "kein API-Schlüssel gesetzt",
     "unreachable": "❌ nicht erreichbar",
     "text": "**yt-dlp:** {yt}\n**Jellyfin ({jfUrl}):** {jf}\n**Sprachverbindung:** {voice}\n\nBot-Audio auf Fluxer ist experimentell (LiveKit über @fluxerjs/voice)."
-  }
+  },
+  "voteAdded": "🗳️ Stimme gezählt: {votes}/{needed} zum Überspringen."
 }
