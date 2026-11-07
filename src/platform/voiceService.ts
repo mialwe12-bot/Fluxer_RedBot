@@ -1,3 +1,4 @@
+import { applyLivekitBase } from './livekitPath.js';
 import { randomUUID } from 'node:crypto';
 import { EventEmitter } from 'node:events';
 import type { Readable } from 'node:stream';
@@ -149,6 +150,7 @@ export class VoiceService extends EventEmitter {
       conn.on('disconnect', () => {
         if (this.sessions.get(guildId)?.conn === conn) this.cleanup(guildId, 'disconnect');
       });
+      await applyLivekitBase(d.endpoint);
       await conn.connect(
         { token: d.token, endpoint: d.endpoint, guild_id: guildId, channel_id: channelId, connection_id: d.connection_id ?? null },
         { guild_id: guildId, channel_id: channelId, user_id: this.platform.user!.id, session_id: '', mute: false, deaf: false, self_mute: false, self_deaf: true },
